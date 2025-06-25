@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name="users")
-@MappedSuperclass
 public class User extends Base {
 
 

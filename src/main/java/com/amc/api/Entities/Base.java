@@ -12,10 +12,10 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@MappedSuperclass
 public class Base {
 
     @Id
