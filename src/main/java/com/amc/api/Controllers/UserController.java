@@ -8,20 +8,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/User")
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private UserService user;
+    private UserService userService;
 
+    @GetMapping("/{uuid}")
+    public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String userUuid ) {
+        User user = userService.findUserByUuid(userUuid);
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
 
-
-
-    @GetMapping()
-    public ResponseEntity<User> getUserByUuid(@RequestBody String userUuid ) {
-
-
-        return null;
+    @PostMapping()
+    public ResponseEntity<User> createUser(@RequestBody User newUser) {
+        User user = userService.createUser(newUser);
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
 

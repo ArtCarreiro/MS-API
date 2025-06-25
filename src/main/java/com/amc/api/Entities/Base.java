@@ -1,6 +1,8 @@
 package com.amc.api.Entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -14,6 +16,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public class Base {
@@ -24,9 +27,11 @@ public class Base {
 
     @CreatedDate
     @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
     @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modified;
 
     @NotNull
@@ -35,16 +40,4 @@ public class Base {
     @NotNull
     private Boolean deleted = false;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Base base = (Base) o;
-        return Objects.equals(uuid, base.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(uuid);
-    }
 }
