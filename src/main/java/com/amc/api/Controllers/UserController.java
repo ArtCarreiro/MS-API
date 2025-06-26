@@ -20,10 +20,22 @@ public class UserController {
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         User user = userService.createUser(newUser);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping("/{uuid}")
+    public ResponseEntity<User> updateUser(@PathVariable("uuid") String userUuid, @RequestBody User userData) {
+        User user = userService.updateUser(userUuid ,userData);
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<User> deleteUser(@PathVariable("uuid") String userUuid ) {
+        User user = userService.deleteUser(userUuid);
+        return user != null ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
 
