@@ -2,6 +2,7 @@ package com.amc.api.Services;
 
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +47,12 @@ public class UserService {
         return null;
     }
 
-    public User deleteUser(String userUuid) {
+    @Transactional
+    public boolean deleteUser(String userUuid) {
         try {
-            return userRepository.deleteUserByUuid(userUuid);
+            User userDeleted = userRepository.findByUuid(userUuid);
+            userRepository.delete(userDeleted);
+            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

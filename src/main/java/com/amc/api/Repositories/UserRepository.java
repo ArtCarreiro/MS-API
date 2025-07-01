@@ -9,6 +9,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUuid(String userUuid);
 
-    User deleteUserByUuid(String userUuid);
-
 }

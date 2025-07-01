@@ -3,6 +3,7 @@ package com.amc.api.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
 public class User extends Base {
 
     @NotNull
