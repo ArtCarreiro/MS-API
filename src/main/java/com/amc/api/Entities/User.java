@@ -1,5 +1,6 @@
 package com.amc.api.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
@@ -47,5 +48,12 @@ public class User extends Base {
     private String profession;
 
     private String keyword;
+
+
+// Camada de endereço do cliente
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_uuid")
+    @JsonManagedReference
+    private Address address;
 
 }
