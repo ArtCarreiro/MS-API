@@ -6,6 +6,7 @@ import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.List;
 import java.util.Date;
 
 
@@ -50,10 +51,10 @@ public class User extends Base {
     private String keyword;
 
 
-// Camada de endereço do cliente
-    @OneToOne(cascade = CascadeType.ALL)
+    // Camada de endereço do cliente
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_uuid")
     @JsonManagedReference
-    private Address address;
+    private List<Address> addresses;
 
 }

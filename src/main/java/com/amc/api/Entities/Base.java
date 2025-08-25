@@ -23,6 +23,7 @@ public class Base {
 
     @Id
     @NotNull
+    @Column(updatable = false)
     private String uuid = UUID.randomUUID().toString();
 
     @CreatedDate

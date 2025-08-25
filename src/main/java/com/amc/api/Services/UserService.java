@@ -3,6 +3,7 @@ package com.amc.api.Services;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public User findUserByUuid(String userUuid) {
         try {
@@ -28,18 +32,13 @@ public class UserService {
         }
     }
 
-    public User updateUser( String userUuid, User user) {
+    @Transactional
+    public User updateUser( String userUuid, User newUser) {
         try {
-            User newUserData = userRepository.findByUuid(userUuid);
-            if (user != null) {
-                newUserData.setEmail(user.getEmail());
-                newUserData.setKeyword(user.getKeyword());
-                newUserData.setPhone(user.getPhone());
-                newUserData.setFirstName(user.getFirstName());
-                newUserData.setLastName(user.getLastName());
-                newUserData.setProfession(user.getProfession());
-                userRepository.save(newUserData);
-                return newUserData;
+            if (newUser != null) {
+                User newUserData = userRepository.findByUuid(userUuid);
+                modelMapper.map(newUser, newUserData);
+                return userRepository.save(newUserData);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

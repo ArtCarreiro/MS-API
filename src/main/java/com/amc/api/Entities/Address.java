@@ -2,10 +2,7 @@ package com.amc.api.Entities;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -45,8 +42,7 @@ public class Address extends Base {
     @NotNull
     private String state;
 
-
-    @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private User user;
 

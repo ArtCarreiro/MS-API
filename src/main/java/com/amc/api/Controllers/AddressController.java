@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/address")
 public class AddressController {
@@ -27,9 +29,9 @@ public class AddressController {
     }
 
     @PostMapping("/{userUuid}")
-    public ResponseEntity<Address> createAddress(@RequestBody Address newAddress, @PathVariable(name="userUuid") String userUuid) {
-        Address address = addressService.createAddress(newAddress, userUuid);
-        return address != null ? ResponseEntity.ok().body(address) : ResponseEntity.badRequest().build();
+    public ResponseEntity<Address> createAddress(@RequestBody List<Address> newAddress, @PathVariable(name="userUuid") String userUuid) {
+       boolean address = addressService.createAddress(newAddress, userUuid);
+        return address ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{addressUuid}")

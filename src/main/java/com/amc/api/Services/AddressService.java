@@ -4,18 +4,24 @@ import com.amc.api.Entities.Address;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.AddressRepository;
 import com.amc.api.Repositories.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AddressService {
 
     @Autowired
-    AddressRepository addressRepository;
+    private AddressRepository addressRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
 
     public Address findAddressByUuid(String addressUuid) {
@@ -35,15 +41,15 @@ public class AddressService {
     }
 
     @Transactional
-    public Address createAddress(Address newAddress, String userUuid) {
+    public Boolean createAddress(List<Address> newAddress, String userUuid) {
         try {
             User user = userRepository.findByUuid(userUuid);
             if (user != null) {
-                user.setAddress(newAddress);
+                user.setAddresses(newAddress);
                 userRepository.save(user);
             }
-            addressRepository.save(newAddress);
-            return newAddress;
+            addressRepository.saveAll(newAddress);
+            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -51,17 +57,12 @@ public class AddressService {
 
     @Transactional
     public Address updateAddress(Address updatedAddress, String addressUuid) {
+        modelMapper.typeMap(Address.class, Address.class)
+                .addMappings(mapper -> mapper.skip(Address::setUuid));
         try {
             Address existingAddress = addressRepository.findByUuid(addressUuid);
             if (existingAddress != null) {
-                existingAddress.setStreet(updatedAddress.getStreet());
-                existingAddress.setCity(updatedAddress.getCity());
-                existingAddress.setState(updatedAddress.getState());
-                existingAddress.setZipCode(updatedAddress.getZipCode());
-                existingAddress.setCountry(updatedAddress.getCountry());
-                existingAddress.setNumber(updatedAddress.getNumber());
-                existingAddress.setAddressComplement(updatedAddress.getAddressComplement());
-                existingAddress.setNeighborhood(updatedAddress.getNeighborhood());
+                modelMapper.map(updatedAddress, existingAddress);
                 return addressRepository.save(existingAddress);
             }
         } catch (Exception e) {
@@ -83,7 +84,5 @@ public class AddressService {
             throw new RuntimeException(e);
         }
     }
-
-    
 
 }
