@@ -29,7 +29,7 @@ public class UserController {
     @GetMapping("/getAll")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users != null ? ResponseEntity.ok(users) : ResponseEntity.notFound().build();
+        return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
     }
 
     @PostMapping
