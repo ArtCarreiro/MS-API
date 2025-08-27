@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 public class CategoryService {
 
     @Autowired
-    private CategoryRepository CategoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
     public Category findCategoryByUuid(String CategoryUuid) {
         try {
-            return CategoryRepository.findByUuid(CategoryUuid);
+            return categoryRepository.findByUuid(CategoryUuid);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -26,7 +26,7 @@ public class CategoryService {
 
     public Category createCategory(Category newCategory) {
         try {
-            return CategoryRepository.save(newCategory);
+            return categoryRepository.save(newCategory);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -38,9 +38,9 @@ public class CategoryService {
                 .addMappings(mapper -> mapper.skip(Category::setUuid));
         try {
             if (newCategory != null) {
-                Category newCategoryData = CategoryRepository.findByUuid(CategoryUuid);
+                Category newCategoryData = categoryRepository.findByUuid(CategoryUuid);
                 modelMapper.map(newCategory, newCategoryData);
-                return CategoryRepository.save(newCategoryData);
+                return categoryRepository.save(newCategoryData);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -51,8 +51,8 @@ public class CategoryService {
     @Transactional
     public boolean deleteCategory(String CategoryUuid) {
         try {
-            Category CategoryDeleted = CategoryRepository.findByUuid(CategoryUuid);
-            CategoryRepository.delete(CategoryDeleted);
+            Category CategoryDeleted = categoryRepository.findByUuid(CategoryUuid);
+            categoryRepository.delete(CategoryDeleted);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -14,38 +14,38 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService ProductService;
+    private ProductService productService;
 
     @Autowired
-    private ProductRepository ProductRepository;
+    private ProductRepository productRepository;
 
     @GetMapping("/{uuid}")
     public ResponseEntity<Product> getProductByUuid(@PathVariable("uuid") String ProductUuid ) {
-        Product Product = ProductService.findProductByUuid(ProductUuid);
+        Product Product = productService.findProductByUuid(ProductUuid);
         return Product != null ? ResponseEntity.ok(Product) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Product>> getAllCategories() {
-        List<Product> categories = ProductRepository.findAll();
+        List<Product> categories = productRepository.findAll();
         return categories.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categories);
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product newUser) {
-        Product Product = ProductService.createProduct(newUser);
+        Product Product = productService.createProduct(newUser);
         return Product != null ? ResponseEntity.ok(Product) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
     public ResponseEntity<Product> updateProduct(@PathVariable("uuid") String ProductUuid, @RequestBody Product ProductData) {
-        Product Product = ProductService.updateProduct(ProductUuid, ProductData);
+        Product Product = productService.updateProduct(ProductUuid, ProductData);
         return Product != null ? ResponseEntity.ok(Product) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Product> deleteProduct(@PathVariable("uuid") String ProductUuid ) {
-        boolean Product = ProductService.deleteProduct(ProductUuid);
+        boolean Product = productService.deleteProduct(ProductUuid);
         return Product ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 

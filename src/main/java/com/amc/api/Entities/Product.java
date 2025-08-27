@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -25,7 +27,11 @@ public class Product extends Base {
     private double height;
     private double depth;
 
-//  private List<Files> files;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_uuid", referencedColumnName = "uuid")
+    @NotNull
+    private List<File> files;
 
     @ManyToOne
     @JoinColumn(name = "category_uuid", referencedColumnName = "uuid")

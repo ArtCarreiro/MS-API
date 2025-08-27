@@ -3,6 +3,7 @@ package com.amc.api.Services;
 import com.amc.api.Entities.Category;
 import com.amc.api.Entities.Product;
 import com.amc.api.Repositories.CategoryRepository;
+import com.amc.api.Repositories.FileRepository;
 import com.amc.api.Repositories.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -13,17 +14,20 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     @Autowired
-    private ProductRepository ProductRepository;
+    private ProductRepository productRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
     public Product findProductByUuid(String ProductUuid) {
         try {
-            return ProductRepository.findByUuid(ProductUuid);
+            return productRepository.findByUuid(ProductUuid);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -34,7 +38,8 @@ public class ProductService {
         try {
             Category category = categoryRepository.findByUuid(newProduct.getCategory().getUuid());
             newProduct.setCategory(category);
-            return ProductRepository.save(newProduct);
+            fileRepository.saveAll(newProduct.getFiles());
+            return productRepository.save(newProduct);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -46,9 +51,9 @@ public class ProductService {
                 .addMappings(mapper -> mapper.skip(Product::setUuid));
         try {
             if (newProduct != null) {
-                Product newProductData = ProductRepository.findByUuid(ProductUuid);
+                Product newProductData = productRepository.findByUuid(ProductUuid);
                 modelMapper.map(newProduct, newProductData);
-                return ProductRepository.save(newProductData);
+                return productRepository.save(newProductData);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -59,8 +64,8 @@ public class ProductService {
     @Transactional
     public boolean deleteProduct(String ProductUuid) {
         try {
-            Product ProductDeleted = ProductRepository.findByUuid(ProductUuid);
-            ProductRepository.delete(ProductDeleted);
+            Product ProductDeleted = productRepository.findByUuid(ProductUuid);
+            productRepository.delete(ProductDeleted);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
