@@ -1,5 +1,6 @@
 package com.amc.api.Services;
 
+import com.amc.api.Entities.Address;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,8 @@ public class UserService {
 
     @Transactional
     public User updateUser( String userUuid, User newUser) {
+        modelMapper.typeMap(User.class, User.class)
+                .addMappings(mapper -> mapper.skip(User::setUuid));
         try {
             if (newUser != null) {
                 User newUserData = userRepository.findByUuid(userUuid);
