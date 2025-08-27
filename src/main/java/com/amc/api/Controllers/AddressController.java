@@ -45,6 +45,4 @@ public class AddressController {
         boolean address = addressService.deleteAddressByUuid(addressUuid);
         return address ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
-
-
 }

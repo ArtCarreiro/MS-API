@@ -49,19 +49,4 @@ public class UserController {
         boolean user = userService.deleteUser(userUuid);
         return user ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
