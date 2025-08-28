@@ -1,6 +1,6 @@
-package com.amc.api.Repositories;
+package com.amc.api.Repositories.Product;
 
-import com.amc.api.Entities.Product;
+import com.amc.api.Entities.Product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

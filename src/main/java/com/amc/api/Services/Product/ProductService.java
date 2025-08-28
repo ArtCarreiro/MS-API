@@ -1,10 +1,10 @@
-package com.amc.api.Services;
+package com.amc.api.Services.Product;
 
 import com.amc.api.Entities.Category;
-import com.amc.api.Entities.Product;
+import com.amc.api.Entities.Product.Product;
 import com.amc.api.Repositories.CategoryRepository;
-import com.amc.api.Repositories.FileRepository;
-import com.amc.api.Repositories.ProductRepository;
+import com.amc.api.Repositories.Product.FileProductRepository;
+import com.amc.api.Repositories.Product.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private FileRepository fileRepository;
+    private FileProductRepository fileProductRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -38,7 +38,7 @@ public class ProductService {
         try {
             Category category = categoryRepository.findByUuid(newProduct.getCategory().getUuid());
             newProduct.setCategory(category);
-            fileRepository.saveAll(newProduct.getFiles());
+            fileProductRepository.saveAll(newProduct.getFileProducts());
             return productRepository.save(newProduct);
         } catch (Exception e){
             throw new RuntimeException(e);

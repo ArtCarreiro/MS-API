@@ -1,5 +1,6 @@
-package com.amc.api.Entities;
+package com.amc.api.Entities.Product;
 
+import com.amc.api.Entities.Base;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import org.hibernate.annotations.SQLDelete;
 @NoArgsConstructor
 @Table(name="files")
 @SQLDelete(sql = "UPDATE files SET deleted = true WHERE uuid=?")
-public class File extends Base {
+public class FileProduct extends Base {
 
     private String name;
     private String pathUrl;

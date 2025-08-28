@@ -1,8 +1,8 @@
-package com.amc.api.Controllers;
+package com.amc.api.Controllers.Product;
 
-import com.amc.api.Entities.Product;
-import com.amc.api.Repositories.ProductRepository;
-import com.amc.api.Services.ProductService;
+import com.amc.api.Entities.Product.Product;
+import com.amc.api.Repositories.Product.ProductRepository;
+import com.amc.api.Services.Product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

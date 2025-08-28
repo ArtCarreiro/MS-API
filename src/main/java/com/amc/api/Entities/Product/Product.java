@@ -1,5 +1,7 @@
-package com.amc.api.Entities;
+package com.amc.api.Entities.Product;
 
+import com.amc.api.Entities.Base;
+import com.amc.api.Entities.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -31,7 +33,7 @@ public class Product extends Base {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_uuid", referencedColumnName = "uuid")
     @NotNull
-    private List<File> files;
+    private List<FileProduct> fileProducts;
 
     @ManyToOne
     @JoinColumn(name = "category_uuid", referencedColumnName = "uuid")
