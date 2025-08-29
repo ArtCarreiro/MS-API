@@ -51,9 +51,7 @@ public class User extends Base {
     private String keyword;
 
 
-    // Camada de endereço do cliente
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_uuid")
     @JsonManagedReference
     private List<Address> addresses;
 
