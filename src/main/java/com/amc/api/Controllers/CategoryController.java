@@ -26,7 +26,7 @@ public class CategoryController {
         return category != null ? ResponseEntity.ok(category) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categories);
