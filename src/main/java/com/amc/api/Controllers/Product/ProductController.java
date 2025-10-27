@@ -19,16 +19,28 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(products);
+    }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<Product> getProductByUuid(@PathVariable("uuid") String ProductUuid ) {
         Product Product = productService.findProductByUuid(ProductUuid);
         return Product != null ? ResponseEntity.ok(Product) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Product>> getAllCategories() {
-        List<Product> categories = productRepository.findAll();
-        return categories.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categories);
+    @GetMapping("/{slug}")
+    public ResponseEntity<Product> getProductBySlug(@PathVariable("slug") String slug) {
+        Product product = productService.findProductBySlug(slug);
+        return product != null ? ResponseEntity.ok().body(product) : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/category/{categorySlug}")
+    public ResponseEntity<Product> getProductsByCategorySlug(@PathVariable("categorySlug") String categorySlug) {
+        Product product = productService.findProductsByCategorySlug(categorySlug);
+        return product != null ? ResponseEntity.ok().body(product) : ResponseEntity.badRequest().build();
     }
 
     @PostMapping

@@ -23,6 +23,7 @@ public class Product extends Base {
     private String name;
     private String description;
     private double price;
+    private String slug;
     private double priceWithDiscount;
     private String skuCode;
     private double width;

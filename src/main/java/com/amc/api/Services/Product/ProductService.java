@@ -33,6 +33,14 @@ public class ProductService {
         }
     }
 
+    public Product findProductBySlug(String slug) {
+        return productRepository.findBySlug(slug);
+    }
+
+    public Product findProductsByCategorySlug(String categorySlug) {
+        return productRepository.findAllProductsByCategorySlug(categorySlug);
+    }
+
     @Transactional
     public Product createProduct(Product newProduct) {
         try {
