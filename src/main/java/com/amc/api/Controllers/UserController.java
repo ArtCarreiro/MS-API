@@ -26,7 +26,7 @@ public class UserController {
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
