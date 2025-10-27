@@ -2,9 +2,13 @@ package com.amc.api.Entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.SQLDelete;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Date;
@@ -20,11 +24,11 @@ import java.util.Date;
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
 public class User extends Base {
 
-    @NotNull
+    @NotBlank(message = "Nome é obrigatório")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NotNull
+    @NotBlank(message = "Sobrenome é obrigatório")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
@@ -34,7 +38,7 @@ public class User extends Base {
     private Date birthdate;
 
     @NotNull
-    @jakarta.validation.constraints.Email
+    @Email(message = "Email inválido")
     @Column(name = "email", nullable = false, length = 70)
     private String email;
 

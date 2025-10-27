@@ -6,6 +6,7 @@ import com.amc.api.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,8 +53,8 @@ public class UserService {
     @Transactional
     public boolean deleteUser(String userUuid) {
         try {
-            User userDeleted = userRepository.findByUuid(userUuid);
-            userRepository.delete(userDeleted);
+            User user = userRepository.findByUuid(userUuid);
+            userRepository.delete(user);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
