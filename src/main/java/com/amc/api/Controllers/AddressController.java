@@ -24,7 +24,7 @@ public class AddressController {
 
     @GetMapping("all/{userUuid}")
     public ResponseEntity<Address> getAllAddressesByUserUuid(@PathVariable(name="userUuid") String userUuid) {
-        Address address = addressService.findAllAddressByUserUuid(userUuid);
+        Address address = addressService.findAllAddressByCustomerUuid(userUuid);
         return address != null ? ResponseEntity.ok().body(address) : ResponseEntity.badRequest().build();
     }
 

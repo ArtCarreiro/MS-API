@@ -1,9 +1,9 @@
 package com.amc.api.Services;
 
 import com.amc.api.Entities.Address;
-import com.amc.api.Entities.User;
+import com.amc.api.Entities.Customer;
 import com.amc.api.Repositories.AddressRepository;
-import com.amc.api.Repositories.UserRepository;
+import com.amc.api.Repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -32,21 +32,21 @@ public class AddressService {
         }
     }
 
-    public Address findAllAddressByUserUuid(String userUuid) {
+    public Address findAllAddressByCustomerUuid(String customerUuid) {
         try {
-            return addressRepository.findAllByUserUuid(userUuid);
+            return addressRepository.findAllByCustomerUuid(customerUuid);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Transactional
-    public Boolean createAddress(List<Address> newAddress, String userUuid) {
+    public Boolean createAddress(List<Address> newAddress, String customerUuid) {
         try {
-            User user = userRepository.findByUuid(userUuid);
-            if (user != null) {
-                user.setAddresses(newAddress);
-                userRepository.save(user);
+            Customer customer = customerRepository.findByUuid(customerUuid);
+            if (customer != null) {
+                customer.setAddresses(newAddress);
+                customerRepository.save(customer);
             }
             addressRepository.saveAll(newAddress);
             return true;

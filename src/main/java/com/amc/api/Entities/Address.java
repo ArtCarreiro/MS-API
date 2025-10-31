@@ -44,6 +44,6 @@ public class Address extends Base {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    private User user;
+    private Customer customer;
 
 }

@@ -9,6 +9,6 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
     Address findByUuid(String addressUuid);
 
-    Address findAllByUserUuid(String userUuid);
+    Address findAllByCustomerUuid(String userUuid);
 
 }

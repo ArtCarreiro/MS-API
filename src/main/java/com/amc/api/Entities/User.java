@@ -1,5 +1,6 @@
 package com.amc.api.Entities;
 
+import com.amc.api.Enums.RolesEnum;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -24,39 +25,17 @@ import java.util.Date;
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
 public class User extends Base {
 
-    @NotBlank(message = "Nome é obrigatório")
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @NotBlank(message = "Sobrenome é obrigatório")
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @NotNull
-    @Temporal(TemporalType.DATE)
-    @Column(name = "birthdate", nullable = false)
-    private Date birthdate;
-
     @NotNull
     @Email(message = "Email inválido")
     @Column(name = "email", nullable = false, length = 70)
     private String email;
 
     @NotNull
-    @Column(name = "phone", nullable = false)
-    private String phone;
+    @NotBlank(message = "Senha é obrigatório")
+    @Column(name = "password", nullable = false)
+    private String password;
 
-    @NotNull
-    @Column(name = "gender", nullable = false)
-    private String gender;
-
-    private String profession;
-
-    private String keyword;
-
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Address> addresses;
+    @Enumerated(EnumType.STRING)
+    private RolesEnum role;
 
 }

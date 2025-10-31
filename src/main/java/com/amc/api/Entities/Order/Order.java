@@ -3,6 +3,7 @@ package com.amc.api.Entities.Order;
 
 import com.amc.api.Entities.Address;
 import com.amc.api.Entities.Base;
+import com.amc.api.Entities.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,8 @@ public class Order extends Base {
     @ManyToOne
     @JoinColumn(name = "shipping_uuid")
     private Address orderShippingDetails;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_uuid")
+    private Customer customer;
 }
