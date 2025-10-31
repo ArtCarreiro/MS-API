@@ -16,21 +16,21 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
-    @GetMapping("/{userUuid}")
-    public ResponseEntity<Address> getAddressByUuid(@PathVariable(name="userUuid") String addressUuid) {
+    @GetMapping("/{customerUuid}")
+    public ResponseEntity<Address> getAddressByUuid(@PathVariable(name="customerUuid") String addressUuid) {
         Address address = addressService.findAddressByUuid(addressUuid);
         return address != null ? ResponseEntity.ok().body(address) : ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("all/{userUuid}")
-    public ResponseEntity<Address> getAllAddressesByUserUuid(@PathVariable(name="userUuid") String userUuid) {
-        Address address = addressService.findAllAddressByCustomerUuid(userUuid);
+    @GetMapping("all/{customerUuid}")
+    public ResponseEntity<Address> getAllAddressesBycustomerUuid(@PathVariable(name="customerUuid") String customerUuid) {
+        Address address = addressService.findAllAddressByCustomerUuid(customerUuid);
         return address != null ? ResponseEntity.ok().body(address) : ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/{userUuid}")
-    public ResponseEntity<Address> createAddress(@RequestBody List<Address> newAddress, @PathVariable(name="userUuid") String userUuid) {
-       boolean address = addressService.createAddress(newAddress, userUuid);
+    @PostMapping("/{customerUuid}")
+    public ResponseEntity<Address> createAddress(@RequestBody List<Address> newAddress, @PathVariable(name="customerUuid") String customerUuid) {
+       boolean address = addressService.createAddress(newAddress, customerUuid);
         return address ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
