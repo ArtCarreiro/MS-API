@@ -2,18 +2,9 @@ package com.amc.api.Enums;
 
 public enum UserRoleEnum {
 
-    ADMINISTRATOR("administrador"),
-    MANAGER("supervisor"),
-    SELLER("vendedor"),
-    USER("usuario");
+    ADMINISTRATOR,
+    MANAGER,
+    SELLER,
+    USER
 
-    private String role;
-
-    UserRoleEnum(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return role;
-    }
 }

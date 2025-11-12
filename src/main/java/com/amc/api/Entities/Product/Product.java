@@ -4,6 +4,7 @@ import com.amc.api.Entities.Base;
 import com.amc.api.Entities.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="products")
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE uuid=?")
 public class Product extends Base {
@@ -37,7 +39,7 @@ public class Product extends Base {
     private List<FileProduct> fileProducts;
 
     @ManyToOne
-    @JoinColumn(name = "category_uuid", referencedColumnName = "uuid")
+    @JoinColumn(name = "category_slug", referencedColumnName = "slug")
     @NotNull
     private Category category;
 
