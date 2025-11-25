@@ -26,7 +26,7 @@ public class Customer extends Base {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @NotBlank(message = "documento é obrigatório")
+    @NotBlank(message = "Documento é obrigatório")
     @Column(name = "document", nullable = false)
     private String document;
 
