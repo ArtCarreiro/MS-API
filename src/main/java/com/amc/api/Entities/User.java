@@ -1,18 +1,21 @@
 package com.amc.api.Entities;
 
-import com.amc.api.Enums.RolesEnum;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.amc.api.Enums.UserRoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.SQLDelete;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Date;
 
 
 @Getter
@@ -23,7 +26,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
-public class User extends Base {
+public class User extends Base implements UserDetails {
 
     @NotNull
     @Email(message = "Email inválido")
@@ -33,9 +36,44 @@ public class User extends Base {
     @NotNull
     @NotBlank(message = "Senha é obrigatório")
     @Column(name = "password", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @NotNull
+    @NotBlank(message = "Role é obrigatório")
     @Enumerated(EnumType.STRING)
-    private RolesEnum role;
+    private UserRoleEnum role;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == UserRoleEnum.ADMINISTRATOR)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+         else
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }

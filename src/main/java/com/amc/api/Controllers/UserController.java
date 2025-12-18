@@ -3,6 +3,8 @@ package com.amc.api.Controllers;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
 import com.amc.api.Services.UserService;
+import com.amc.api.Utils.Exceptions;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -22,8 +24,10 @@ public class UserController {
 
     @GetMapping("/{uuid}")
     public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String userUuid ) {
+        if (userRepository.findByUuid(userUuid) == null)
+            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         User user = userService.findUserByUuid(userUuid);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @GetMapping
@@ -33,20 +37,26 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User newUser) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User newUser) {
+        if (userRepository.findByEmail(newUser.getEmail()) != null)
+            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail informado.");
         User user = userService.createUser(newUser);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<User> updateUser(@PathVariable("uuid") String userUuid, @RequestBody User userData) {
+    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody User userData) {
+        if (userRepository.findByUuid(userUuid) == null)
+            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         User user = userService.updateUser(userUuid ,userData);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<User> deleteUser(@PathVariable("uuid") String userUuid ) {
+    public ResponseEntity<?> deleteUser(@PathVariable("uuid") String userUuid ) {
+        if (userRepository.findByUuid(userUuid) == null)
+            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         boolean user = userService.deleteUser(userUuid);
-        return user ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return user ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
 }

@@ -2,6 +2,7 @@ package com.amc.api.Services;
 
 import com.amc.api.Entities.Address;
 import com.amc.api.Entities.User;
+import com.amc.api.Enums.UserRoleEnum;
 import com.amc.api.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,9 @@ public class UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User findUserByUuid(String userUuid) {
         try {
             return userRepository.findByUuid(userUuid);
@@ -28,6 +32,9 @@ public class UserService {
 
     public User createUser(User newUser) {
         try {
+            String passwordEncoded = passwordEncoder.encode(newUser.getPassword());
+            newUser.setPassword(passwordEncoded);
+            newUser.setRole(UserRoleEnum.valueOf(newUser.getRole().toString()));
             return userRepository.save(newUser);
         } catch (Exception e){
             throw new RuntimeException(e);

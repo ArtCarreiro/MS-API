@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -37,7 +39,7 @@ public class ProductService {
         return productRepository.findBySlug(slug);
     }
 
-    public Product findProductsByCategorySlug(String categorySlug) {
+    public List<Product> findAllProductsByCategorySlug(String categorySlug) {
         return productRepository.findAllProductsByCategorySlug(categorySlug);
     }
 

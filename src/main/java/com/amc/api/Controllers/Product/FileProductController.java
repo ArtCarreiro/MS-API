@@ -14,21 +14,21 @@ public class FileProductController {
     private FileProductService fileProductService;
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<FileProduct> getFileByUuid(@PathVariable("uuid") String FileUuid ) {
-        FileProduct FileProduct = fileProductService.findFileByUuid(FileUuid);
-        return FileProduct != null ? ResponseEntity.ok(FileProduct) : ResponseEntity.notFound().build();
+    public ResponseEntity<FileProduct> getFileByUuid(@PathVariable("uuid") String fileUuid ) {
+        FileProduct fileProduct = fileProductService.findFileByUuid(fileUuid);
+        return fileProduct != null ? ResponseEntity.ok(fileProduct) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<FileProduct> updateFile(@PathVariable("uuid") String FileUuid, @RequestBody FileProduct fileProductData) {
-        FileProduct FileProduct = fileProductService.updateFile(FileUuid , fileProductData);
-        return FileProduct != null ? ResponseEntity.ok(FileProduct) : ResponseEntity.notFound().build();
+    public ResponseEntity<FileProduct> updateFile(@PathVariable("uuid") String fileUuid, @RequestBody FileProduct fileProductData) {
+        FileProduct fileProduct = fileProductService.updateFile(fileUuid , fileProductData);
+        return fileProduct != null ? ResponseEntity.ok(fileProduct) : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<FileProduct> deleteFile(@PathVariable("uuid") String FileUuid ) {
-        boolean File = fileProductService.deleteFile(FileUuid);
-        return File ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<FileProduct> deleteFile(@PathVariable("uuid") String fileUuid ) {
+        boolean file = fileProductService.deleteFile(fileUuid);
+        return file ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
     
 }
