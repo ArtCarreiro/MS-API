@@ -100,12 +100,7 @@
         </dependency>
 
 		<!--Essas dependêncais abaixo são para o intuito de testes localmente até ter o ambiente de Dev ficar pronto-->
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
+		
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
