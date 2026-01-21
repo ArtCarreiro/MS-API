@@ -1,6 +1,5 @@
 package com.amc.api.Services;
 
-import com.amc.api.Entities.Address;
 import com.amc.api.Entities.User;
 import com.amc.api.Enums.UserRoleEnum;
 import com.amc.api.Repositories.UserRepository;

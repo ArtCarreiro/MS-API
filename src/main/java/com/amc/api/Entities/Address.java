@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
@@ -15,7 +14,6 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Table(name="address")
-@Where(clause = "deleted = false")
 @SQLDelete(sql = "UPDATE address SET deleted = true WHERE uuid=?")
 public class Address extends Base {
 

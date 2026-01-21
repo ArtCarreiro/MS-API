@@ -1,7 +1,6 @@
 package com.amc.api.Services.Order;
 
 import com.amc.api.Entities.Order.Order;
-import com.amc.api.Entities.User;
 import com.amc.api.Repositories.Order.OrderRepository;
 import com.amc.api.Repositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -9,20 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
 
     public Order findOrderByUuid(String OrderUuid) {
         try {

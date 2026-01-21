@@ -5,7 +5,6 @@ import com.amc.api.Entities.Product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,7 +16,6 @@ import java.util.UUID;
 public class CartItems {
 
     @Id
-    @NotNull
     @Column(updatable = false)
     private String uuid = UUID.randomUUID().toString();
 
