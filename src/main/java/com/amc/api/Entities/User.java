@@ -20,7 +20,6 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name="users")
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
