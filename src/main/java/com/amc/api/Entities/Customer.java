@@ -1,7 +1,5 @@
 package com.amc.api.Entities;
 
-import com.amc.api.Entities.Cart.Cart;
-import com.amc.api.Entities.Order.Order;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -52,11 +50,5 @@ public class Customer extends Base {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Address> addresses;
-
-    @OneToMany(mappedBy = "customer")
-    private List<Cart> carts;
-
-    @OneToMany(mappedBy = "customer")
-    private List<Order> orders;
 
 }
