@@ -1,6 +1,7 @@
 package com.amc.api.Entities;
 
 import com.amc.api.Enums.UserRoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -42,34 +43,40 @@ public class User extends Base implements UserDetails {
     private UserRoleEnum role;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRoleEnum.ADMINISTRATOR)
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
          else
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return "";
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
