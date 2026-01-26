@@ -1,6 +1,7 @@
 package com.amc.api.Services;
 
-import com.amc.api.DTO.UserDTO;
+import com.amc.api.DTO.UserLoginDTO;
+import com.amc.api.Utils.Exceptions;
 import com.amc.api.Entities.User;
 import com.amc.api.Enums.UserRoleEnum;
 import com.amc.api.Repositories.UserRepository;
@@ -24,7 +25,7 @@ public class UserService {
 
     public User findUserByUuid(String userUuid) {
         try {
-            return userRepository.findByUuid(userUuid);
+            return validationUser(userUuid);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -42,19 +43,15 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser( String userUuid, User newUser) {
-        modelMapper.typeMap(User.class, User.class)
-                .addMappings(mapper -> mapper.skip(User::setUuid));
+    public User updateUser( String userUuid, UserLoginDTO newUserData) {
         try {
-            if (newUser != null) {
-                User newUserData = userRepository.findByUuid(userUuid);
-                modelMapper.map(newUser, newUserData);
-                return userRepository.save(newUserData);
-            }
+            User user = userRepository.findByUuid(userUuid);
+            modelMapper.map(newUserData, user);
+            userRepository.save(user);
+            return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     @Transactional
@@ -66,6 +63,15 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public User validationUser (String userUuid) {
+        User user = userRepository.findByUuid(userUuid);
+        if (user == null) 
+            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
+        if (user.getDeleted()) 
+            throw new Exceptions.DatabaseException("Usuário deletado.");
+        return user;
     }
 
 }

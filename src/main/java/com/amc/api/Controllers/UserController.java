@@ -1,6 +1,6 @@
 package com.amc.api.Controllers;
 
-import com.amc.api.DTO.UserDTO;
+import com.amc.api.DTO.UserLoginDTO;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
 import com.amc.api.Services.UserService;
@@ -25,8 +25,6 @@ public class UserController {
 
     @GetMapping("/{uuid}")
     public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String userUuid ) {
-        if (userRepository.findByUuid(userUuid) == null)
-            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         User user = userService.findUserByUuid(userUuid);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
@@ -40,16 +38,16 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User newUser) {
         if (userRepository.findByEmail(newUser.getEmail()) != null)
-            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail informado.");
+            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail: " + newUser.getEmail() + ".");
         User user = userService.createUser(newUser);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody User userData) {
+    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody UserLoginDTO newUserData) {
         if (userRepository.findByUuid(userUuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        User user = userService.updateUser(userUuid ,userData);
+        User user = userService.updateUser(userUuid, newUserData);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
