@@ -23,21 +23,22 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @GetMapping
+    public ResponseEntity<List<User>> getActiveUsers() {
+        List<User> users = userRepository.findAll()
+                .stream()
+                .filter(User::getActive)
+                .toList();
+        return users.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(users);
+    }
+
     @GetMapping("/{uuid}")
-    public ResponseEntity<User> getUserByUuid(@PathVariable String uuid ) {
+    public ResponseEntity<User> getUserByUuid(@PathVariable String uuid) {
         return userRepository.findAll().stream()
                 .filter(user -> uuid.equals(user.getUuid()))
                 .findFirst()
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> user = userRepository.findAll().stream()
-                .filter(User::getActive)
-                .toList();
-        return user.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(user);
     }
 
     @PostMapping
