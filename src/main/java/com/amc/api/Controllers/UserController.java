@@ -24,7 +24,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String uuid ) {
+    public ResponseEntity<User> getUserByUuid(@PathVariable String uuid ) {
         return userRepository.findAll().stream()
                 .filter(user -> uuid.equals(user.getUuid()))
                 .findFirst()
