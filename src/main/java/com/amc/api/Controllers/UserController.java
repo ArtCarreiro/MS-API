@@ -24,15 +24,20 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String userUuid ) {
-        User user = userService.findUserByUuid(userUuid);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
+    public ResponseEntity<User> getUserByUuid(@PathVariable("uuid") String uuid ) {
+        return userRepository.findAll().stream()
+                .filter(user -> uuid.equals(user.getUuid()))
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.isEmpty() ? ResponseEntity.badRequest().build() : ResponseEntity.ok(users);
+        List<User> user = userRepository.findAll().stream()
+                .filter(User::getActive)
+                .toList();
+        return user.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(user);
     }
 
     @PostMapping
