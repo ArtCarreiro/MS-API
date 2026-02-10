@@ -1,12 +1,14 @@
 package com.amc.api.DTO;
 
-import com.amc.api.Entities.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.amc.api.Enums.UserRoleEnum;
 
-public class UserDTO extends User  {
+import lombok.Data;
 
+@Data
+public class UserDTO {
+    
     private String email;
 
-    @JsonIgnore
-    private String password;
+    private UserRoleEnum role;
+
 }

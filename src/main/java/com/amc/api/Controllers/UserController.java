@@ -1,6 +1,6 @@
 package com.amc.api.Controllers;
 
-import com.amc.api.DTO.UserLoginDTO;
+import com.amc.api.DTO.UserDTO;
 import com.amc.api.Entities.User;
 import com.amc.api.Repositories.UserRepository;
 import com.amc.api.Services.UserService;
@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(users);
+        return users.isEmpty() ? ResponseEntity.badRequest().build() : ResponseEntity.ok(users);
     }
 
     @PostMapping
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody UserLoginDTO newUserData) {
+    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody UserDTO newUserData) {
         if (userRepository.findByUuid(userUuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         User user = userService.updateUser(userUuid, newUserData);
@@ -57,5 +57,13 @@ public class UserController {
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         boolean user = userService.deleteUser(userUuid);
         return user ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+    }
+
+    @PutMapping("/{uuid}/password")
+    public ResponseEntity<?> updateUserPassword(@PathVariable("uuid") String userUuid, @RequestBody String newPassword) {
+        if (userRepository.findByUuid(userUuid) == null)
+            throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
+        boolean user = userService.updateUserPassword(userUuid, newPassword);
+        return user ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 }

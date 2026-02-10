@@ -1,6 +1,6 @@
 package com.amc.api.Services;
 
-import com.amc.api.DTO.UserLoginDTO;
+import com.amc.api.DTO.UserDTO;
 import com.amc.api.Utils.Exceptions;
 import com.amc.api.Entities.User;
 import com.amc.api.Enums.UserRoleEnum;
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser( String userUuid, UserLoginDTO newUserData) {
+    public User updateUser( String userUuid, UserDTO newUserData) {
         try {
             User user = userRepository.findByUuid(userUuid);
             modelMapper.map(newUserData, user);
@@ -59,6 +59,18 @@ public class UserService {
         try {
             User user = userRepository.findByUuid(userUuid);
             userRepository.delete(user);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean updateUserPassword(String userUuid, String newPassword) {
+        try {
+            User user = userRepository.findByUuid(userUuid);
+            String passwordEncoded = passwordEncoder.encode(newPassword);
+            user.setPassword(passwordEncoded);
+            userRepository.save(user);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
