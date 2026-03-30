@@ -3,7 +3,7 @@ package com.amc.api.Controllers;
 
 import com.amc.api.Entities.Customer;
 import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Services.CustomerService;
+import com.amc.api.Interfaces.CustomerBO;
 
 import jakarta.validation.Valid;
 
@@ -21,7 +21,7 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerBO customerBO;
 
     @GetMapping
     public ResponseEntity<List<Customer>> getActiveCustomers() {
@@ -45,7 +45,7 @@ public class CustomerController {
     public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
         Customer newCustomer = null;
         if (customer != null) 
-            newCustomer = customerService.createCustomer(customer);
+            newCustomer = customerBO.createCustomer(customer);
         return newCustomer != null ? ResponseEntity.ok(newCustomer) : ResponseEntity.badRequest().build();
     }
 }

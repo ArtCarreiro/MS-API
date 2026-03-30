@@ -1,17 +1,18 @@
 package com.amc.api.Services;
 
-import com.amc.api.Entities.Customer;
-import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
-
 import java.beans.Transient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amc.api.Entities.Customer;
+import com.amc.api.Interfaces.CustomerBO;
+import com.amc.api.Repositories.CustomerRepository;
+import com.amc.api.Repositories.UserRepository;
+import com.amc.api.Utils.Exceptions;
+
 @Service
-public class CustomerService {
+public class CustomerService implements CustomerBO {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -19,6 +20,7 @@ public class CustomerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     @Transient
     public Customer createCustomer(Customer customer) {
         validationCustomer(customer.getUser().getEmail());
@@ -31,6 +33,7 @@ public class CustomerService {
         }
     }
 
+    @Override
     public void validationCustomer(String email) {
         if (userRepository.findByEmail(email) != null)
             throw new Exceptions.DatabaseException("E-mail: " + email + " já cadastrado.");

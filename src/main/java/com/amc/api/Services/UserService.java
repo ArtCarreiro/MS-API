@@ -1,18 +1,21 @@
 package com.amc.api.Services;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Utils.Exceptions;
-import com.amc.api.Entities.User;
-import com.amc.api.Enums.UserRoleEnum;
-import com.amc.api.Repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.amc.api.DTO.UserDTO;
+import com.amc.api.Entities.User;
+import com.amc.api.Enums.UserRoleEnum;
+import com.amc.api.Interfaces.UserBO;
+import com.amc.api.Repositories.UserRepository;
+import com.amc.api.Utils.Exceptions;
+
+import jakarta.transaction.Transactional;
+
 @Service
-public class UserService {
+public class UserService implements UserBO {
 
     @Autowired
     private UserRepository userRepository;
@@ -23,6 +26,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Override
     public User findUserByUuid(String userUuid) {
         try {
             return validationUser(userUuid);
@@ -30,7 +34,8 @@ public class UserService {
             throw new RuntimeException(e);
         }
     }
-
+    
+    @Override
     public User createUser(User newUser) {
         try {
             String passwordEncoded = passwordEncoder.encode(newUser.getPassword());
@@ -42,6 +47,7 @@ public class UserService {
         }
     }
 
+    @Override
     @Transactional
     public User updateUser( String userUuid, UserDTO newUserData) {
         try {
@@ -54,6 +60,7 @@ public class UserService {
         }
     }
 
+    @Override
     @Transactional
     public boolean deleteUser(String userUuid) {
         try {
@@ -65,6 +72,7 @@ public class UserService {
         }
     }
 
+    @Override
     public boolean updateUserPassword(String userUuid, String newPassword) {
         try {
             User user = userRepository.findByUuid(userUuid);
@@ -77,6 +85,7 @@ public class UserService {
         }
     }
 
+    @Override
     public User validationUser (String userUuid) {
         User user = userRepository.findByUuid(userUuid);
         if (user == null) 
