@@ -50,34 +50,34 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User newUser) {
-        if (userRepository.findByEmail(newUser.getEmail()) != null)
-            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail: " + newUser.getEmail() + ".");
-        User user = userBO.createUser(newUser);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User data) {
+        if (userRepository.findByEmail(data.getEmail()) != null)
+            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail: " + data.getEmail() + ".");
+        User user = userBO.createUser(data);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<User> updateUser(@Valid @PathVariable("uuid") String userUuid, @RequestBody UserDTO newUserData) {
-        if (userRepository.findByUuid(userUuid) == null)
+    public ResponseEntity<User> updateUser(@Valid @PathVariable String uuid, @RequestBody UserDTO data) {
+        if (userRepository.findByUuid(uuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        User user = userBO.updateUser(userUuid, newUserData);
+        User user = userBO.updateUser(uuid, data);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<?> deleteUser(@PathVariable("uuid") String userUuid ) {
-        if (userRepository.findByUuid(userUuid) == null)
+    public ResponseEntity<?> deleteUser(@PathVariable String uuid ) {
+        if (userRepository.findByUuid(uuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        boolean user = userBO.deleteUser(userUuid);
+        boolean user = userBO.deleteUser(uuid);
         return user ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}/password")
-    public ResponseEntity<?> updateUserPassword(@PathVariable("uuid") String userUuid, @RequestBody String newPassword) {
-        if (userRepository.findByUuid(userUuid) == null)
+    public ResponseEntity<?> updateUserPassword(@PathVariable("uuid") String uuid, @RequestBody String newPassword) {
+        if (userRepository.findByUuid(uuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        boolean user = userBO.updateUserPassword(userUuid, newPassword);
+        boolean user = userBO.updateUserPassword(uuid, newPassword);
         return user ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 }

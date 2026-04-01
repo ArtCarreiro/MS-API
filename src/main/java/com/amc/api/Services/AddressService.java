@@ -1,8 +1,10 @@
 package com.amc.api.Services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amc.api.DTO.AddressDTO;
 import com.amc.api.Entities.Address;
 import com.amc.api.Entities.Customer;
 import com.amc.api.Interfaces.AddressBO;
@@ -22,13 +24,15 @@ public class AddressService implements AddressBO {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private ModelMapper mapper;
     
     @Override
     @Transactional
-    public Address createAddress(Address address){
+    public Address createAddress(Address data){
         try {
-            Address newAddress = addressRepository.save(address);
-            Customer customer = customerRepository.findByUuid(address.getCustomer().getUuid());
+            Address newAddress = addressRepository.save(data);
+            Customer customer = customerRepository.findByUuid(data.getCustomer().getUuid());
             customerRepository.save(customer);
             return newAddress;
         } catch (Exception e) {
@@ -36,8 +40,17 @@ public class AddressService implements AddressBO {
         }
     }
 
-
-
+    @Override
+    @Transactional
+    public Address updateAddress(AddressDTO data, String uuid){
+        try {
+            Address address = addressRepository.findByUuid(uuid);
+            mapper.map(data, address.getClass());
+            return addressRepository.save(address);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     @Transactional

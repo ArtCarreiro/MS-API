@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amc.api.DTO.AddressDTO;
 import com.amc.api.Entities.Address;
 import com.amc.api.Interfaces.AddressBO;
 import com.amc.api.Repositories.AddressRepository;
@@ -39,13 +41,18 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Address> createAddress(@Valid @RequestBody Address newAddress) {
-        addressBO.validation(newAddress);
-        Address address = addressBO.createAddress(newAddress);
+    public ResponseEntity<Address> createAddress(@Valid @RequestBody Address data) {
+        addressBO.validation(data);
+        Address address = addressBO.createAddress(data);
         return address != null ? ResponseEntity.ok(address) : ResponseEntity.badRequest().build();
     }
     
-    
+    @PutMapping("/{uuid}")
+    public ResponseEntity<Address> updateAddress(@Valid @RequestBody AddressDTO data, @PathVariable String uuid) {
+        Address address = addressBO.updateAddress(data, uuid);
+        return address != null ? ResponseEntity.ok(address) : ResponseEntity.badRequest().build();
+    }
+     
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Boolean> deleteAddress(@PathVariable String uuid) {
         Address address = addressRepository.findByUuid(uuid);
@@ -54,6 +61,5 @@ public class AddressController {
         addressBO.deleteAddress(address);
         return ResponseEntity.ok(true);
     }
-
 
 }

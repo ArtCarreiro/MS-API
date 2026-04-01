@@ -25,23 +25,14 @@ public class UserService implements UserBO {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Override
-    public User findUserByUuid(String userUuid) {
-        try {
-            return validationUser(userUuid);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
     
     @Override
-    public User createUser(User newUser) {
+    public User createUser(User user) {
         try {
-            String passwordEncoded = passwordEncoder.encode(newUser.getPassword());
-            newUser.setPassword(passwordEncoded);
-            newUser.setRole(UserRoleEnum.valueOf(newUser.getRole().toString()));
-            return userRepository.save(newUser);
+            String passwordEncoded = passwordEncoder.encode(user.getPassword());
+            user.setPassword(passwordEncoded);
+            user.setRole(UserRoleEnum.valueOf(user.getRole().toString()));
+            return userRepository.save(user);
         } catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -49,10 +40,10 @@ public class UserService implements UserBO {
 
     @Override
     @Transactional
-    public User updateUser( String userUuid, UserDTO newUserData) {
+    public User updateUser( String uuid, UserDTO data) {
         try {
-            User user = userRepository.findByUuid(userUuid);
-            modelMapper.map(newUserData, user);
+            User user = userRepository.findByUuid(uuid);
+            modelMapper.map(data, user);
             userRepository.save(user);
             return user;
         } catch (Exception e) {
@@ -62,9 +53,9 @@ public class UserService implements UserBO {
 
     @Override
     @Transactional
-    public boolean deleteUser(String userUuid) {
+    public boolean deleteUser(String uuid) {
         try {
-            User user = userRepository.findByUuid(userUuid);
+            User user = userRepository.findByUuid(uuid);
             userRepository.delete(user);
             return true;
         } catch (Exception e) {
@@ -73,9 +64,9 @@ public class UserService implements UserBO {
     }
 
     @Override
-    public boolean updateUserPassword(String userUuid, String newPassword) {
+    public boolean updateUserPassword(String uuid, String newPassword) {
         try {
-            User user = userRepository.findByUuid(userUuid);
+            User user = userRepository.findByUuid(uuid);
             String passwordEncoded = passwordEncoder.encode(newPassword);
             user.setPassword(passwordEncoded);
             userRepository.save(user);
@@ -86,8 +77,8 @@ public class UserService implements UserBO {
     }
 
     @Override
-    public User validationUser (String userUuid) {
-        User user = userRepository.findByUuid(userUuid);
+    public User validationUser (String uuid) {
+        User user = userRepository.findByUuid(uuid);
         if (user == null) 
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
         if (user.getDeleted()) 

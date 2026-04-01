@@ -5,15 +5,13 @@ import com.amc.api.Entities.User;
 
 public interface UserBO {
     
-    User findUserByUuid(String userUuid);
+    User createUser(User data);
 
-    User createUser(User newUser);
+    User updateUser( String uuid, UserDTO data);
 
-    User updateUser( String userUuid, UserDTO newUserData);
+    boolean deleteUser(String uuid);
 
-    boolean deleteUser(String userUuid);
+    boolean updateUserPassword(String uuid, String newPassword);
 
-    boolean updateUserPassword(String userUuid, String newPassword);
-
-    User validationUser (String userUuid);
+    User validationUser (String uuid);
 }

@@ -4,7 +4,7 @@ import com.amc.api.Entities.Customer;
 
 public interface CustomerBO {
 
-    Customer createCustomer(Customer customer);
+    Customer createCustomer(Customer data);
 
     void validationCustomer(String email);
     
