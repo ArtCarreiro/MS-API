@@ -58,8 +58,7 @@ public class AddressController {
         Address address = addressRepository.findByUuid(uuid);
         if (address == null) 
             throw new Exceptions.ResourceNotFoundException("Endereço não encontrado.");
-        addressBO.deleteAddress(address);
-        return ResponseEntity.ok(true);
+        return addressBO.deleteAddress(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
 
 }

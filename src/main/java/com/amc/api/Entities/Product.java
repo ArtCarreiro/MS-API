@@ -4,9 +4,11 @@ import org.hibernate.annotations.SQLDelete;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "products")
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE uuid=?")

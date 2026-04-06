@@ -45,18 +45,20 @@ public class AddressService implements AddressBO {
     public Address updateAddress(AddressDTO data, String uuid){
         try {
             Address address = addressRepository.findByUuid(uuid);
+            if (address == null)
+                throw new RuntimeException("Endereço não encontrado");
             mapper.map(data, address.getClass());
             return addressRepository.save(address);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     @Transactional
-    public boolean deleteAddress(Address address){
+    public boolean deleteAddress(String uuid){
         try {
-            addressRepository.delete(address);
+            addressRepository.deleteAddressByUuid(uuid);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);

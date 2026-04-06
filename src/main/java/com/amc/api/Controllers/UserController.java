@@ -69,8 +69,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable String uuid ) {
         if (userRepository.findByUuid(uuid) == null)
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        boolean user = userBO.deleteUser(uuid);
-        return user ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+        return userBO.deleteUser(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}/password")

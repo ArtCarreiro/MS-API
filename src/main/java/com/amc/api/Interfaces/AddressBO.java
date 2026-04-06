@@ -11,5 +11,5 @@ public interface AddressBO {
 
     Address updateAddress(AddressDTO data, String uuid);
 
-    boolean deleteAddress(Address data);
+    boolean deleteAddress(String uuid);
 }

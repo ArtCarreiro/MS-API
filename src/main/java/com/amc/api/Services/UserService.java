@@ -43,22 +43,12 @@ public class UserService implements UserBO {
     public User updateUser( String uuid, UserDTO data) {
         try {
             User user = userRepository.findByUuid(uuid);
+            if(user == null)
+                throw new RuntimeException("Usuário não encontrado");
             modelMapper.map(data, user);
             userRepository.save(user);
             return user;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteUser(String uuid) {
-        try {
-            User user = userRepository.findByUuid(uuid);
-            userRepository.delete(user);
-            return true;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -70,6 +60,17 @@ public class UserService implements UserBO {
             String passwordEncoded = passwordEncoder.encode(newPassword);
             user.setPassword(passwordEncoded);
             userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteUser(String uuid) {
+        try {
+            userRepository.deleteUserByUuid(uuid);
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
