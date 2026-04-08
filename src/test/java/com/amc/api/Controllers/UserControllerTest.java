@@ -43,11 +43,12 @@ class UserControllerTest {
         when(userRepository.findAll()).thenReturn(List.of(activeUser, inactiveUser));
 
         ResponseEntity<List<User>> response = userController.getActiveUsers();
+        List<User> body = response.getBody();
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertSame(activeUser, response.getBody().getFirst());
+        assertNotNull(body);
+        assertEquals(1, body.size());
+        assertSame(activeUser, body.getFirst());
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.amc.api.Services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,7 +60,7 @@ class AddressServiceTest {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> addressService.createAddress(address));
 
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof IllegalStateException);
     }
 
     @Test
@@ -86,7 +85,7 @@ class AddressServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> addressService.updateAddress(new AddressDTO(), "missing"));
 
-        assertInstanceOf(RuntimeException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof RuntimeException);
         assertEquals("Endereço não encontrado", exception.getCause().getMessage());
     }
 
@@ -105,7 +104,7 @@ class AddressServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> addressService.deleteAddress("address-1"));
 
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof IllegalStateException);
     }
 
     @Test

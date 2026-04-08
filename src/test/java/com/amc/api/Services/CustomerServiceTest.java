@@ -2,7 +2,6 @@ package com.amc.api.Services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,7 +75,7 @@ class CustomerServiceTest {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> customerService.createCustomer(customer));
 
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof IllegalStateException);
     }
 
     @Test
@@ -100,7 +99,7 @@ class CustomerServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> customerService.updateCustomer(new CustomerDTO(), "missing"));
 
-        assertInstanceOf(RuntimeException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof RuntimeException);
         assertEquals("Customer não encontrado", exception.getCause().getMessage());
     }
 
@@ -119,7 +118,7 @@ class CustomerServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> customerService.deleteCustomer("customer-1"));
 
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
+        assertTrue(exception.getCause() instanceof IllegalStateException);
     }
 
     @Test

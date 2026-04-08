@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.DTO.AddressDTO;
 import com.amc.api.DTO.CustomerDTO;
 import com.amc.api.Entities.Customer;
 import com.amc.api.Interfaces.CustomerBO;

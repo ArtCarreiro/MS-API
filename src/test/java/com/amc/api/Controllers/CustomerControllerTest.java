@@ -43,11 +43,12 @@ class CustomerControllerTest {
         when(customerRepository.findAll()).thenReturn(List.of(activeCustomer, inactiveCustomer));
 
         ResponseEntity<List<Customer>> response = customerController.getActiveCustomers();
+        List<Customer> body = response.getBody();
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertSame(activeCustomer, response.getBody().getFirst());
+        assertNotNull(body);
+        assertEquals(1, body.size());
+        assertSame(activeCustomer, body.getFirst());
     }
 
     @Test
