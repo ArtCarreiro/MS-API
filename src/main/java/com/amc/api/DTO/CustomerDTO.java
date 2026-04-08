@@ -1,4 +1,4 @@
-package com.amc.api.DTO;
+package com.amc.api.dto;
 
 import java.util.Date;
 

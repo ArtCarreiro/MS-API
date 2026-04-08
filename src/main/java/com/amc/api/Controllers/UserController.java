@@ -1,4 +1,4 @@
-package com.amc.api.Controllers;
+package com.amc.api.controllers;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Entities.User;
-import com.amc.api.Interfaces.UserBO;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.UserDTO;
+import com.amc.api.entities.User;
+import com.amc.api.interfaces.UserBO;
+import com.amc.api.repositories.UserRepository;
+import com.amc.api.utils.Exceptions;
 
 import jakarta.validation.Valid;
 

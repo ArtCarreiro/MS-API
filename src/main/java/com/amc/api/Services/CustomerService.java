@@ -1,4 +1,4 @@
-package com.amc.api.Services;
+package com.amc.api.services;
 
 import java.beans.Transient;
 
@@ -6,12 +6,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.DTO.CustomerDTO;
-import com.amc.api.Entities.Customer;
-import com.amc.api.Interfaces.CustomerBO;
-import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.CustomerDTO;
+import com.amc.api.entities.Customer;
+import com.amc.api.interfaces.CustomerBO;
+import com.amc.api.repositories.CustomerRepository;
+import com.amc.api.repositories.UserRepository;
+import com.amc.api.utils.Exceptions;
 
 import jakarta.transaction.Transactional;
 

@@ -1,4 +1,4 @@
-package com.amc.api.Controllers;
+package com.amc.api.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,12 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Entities.User;
-import com.amc.api.Enums.UserRoleEnum;
-import com.amc.api.Interfaces.UserBO;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.UserDTO;
+import com.amc.api.entities.User;
+import com.amc.api.enums.UserRoleEnum;
+import com.amc.api.interfaces.UserBO;
+import com.amc.api.repositories.UserRepository;
+import com.amc.api.utils.Exceptions;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {

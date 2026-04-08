@@ -1,6 +1,6 @@
-package com.amc.api.DTO;
+package com.amc.api.dto;
 
-import com.amc.api.Entities.Customer;
+import com.amc.api.entities.Customer;
 
 import lombok.Getter;
 import lombok.Setter;

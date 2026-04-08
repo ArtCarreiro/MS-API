@@ -1,4 +1,4 @@
-package com.amc.api.Config;
+package com.amc.api.config;
 
 
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
-package com.amc.api.Repositories;
+package com.amc.api.repositories;
 
-import com.amc.api.Entities.Customer;
+import com.amc.api.entities.Customer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

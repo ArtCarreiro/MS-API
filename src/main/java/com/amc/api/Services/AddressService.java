@@ -1,16 +1,16 @@
-package com.amc.api.Services;
+package com.amc.api.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.DTO.AddressDTO;
-import com.amc.api.Entities.Address;
-import com.amc.api.Entities.Customer;
-import com.amc.api.Interfaces.AddressBO;
-import com.amc.api.Repositories.AddressRepository;
-import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.AddressDTO;
+import com.amc.api.entities.Address;
+import com.amc.api.entities.Customer;
+import com.amc.api.interfaces.AddressBO;
+import com.amc.api.repositories.AddressRepository;
+import com.amc.api.repositories.CustomerRepository;
+import com.amc.api.utils.Exceptions;
 
 import jakarta.transaction.Transactional;
 

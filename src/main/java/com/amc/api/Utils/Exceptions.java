@@ -1,4 +1,4 @@
-package com.amc.api.Utils;
+package com.amc.api.utils;
 
 public class Exceptions {
 

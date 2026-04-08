@@ -1,4 +1,4 @@
-package com.amc.api.Entities;
+package com.amc.api.entities;
 
 import java.util.Date;
 import java.util.List;

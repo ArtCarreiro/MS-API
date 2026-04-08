@@ -1,4 +1,4 @@
-package com.amc.api.Services;
+package com.amc.api.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Entities.User;
-import com.amc.api.Enums.UserRoleEnum;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.UserDTO;
+import com.amc.api.entities.User;
+import com.amc.api.enums.UserRoleEnum;
+import com.amc.api.repositories.UserRepository;
+import com.amc.api.utils.Exceptions;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {

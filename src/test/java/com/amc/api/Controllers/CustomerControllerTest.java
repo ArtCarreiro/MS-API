@@ -1,4 +1,4 @@
-package com.amc.api.Controllers;
+package com.amc.api.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,13 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import com.amc.api.DTO.CustomerDTO;
-import com.amc.api.Entities.Customer;
-import com.amc.api.Entities.User;
-import com.amc.api.Enums.UserRoleEnum;
-import com.amc.api.Interfaces.CustomerBO;
-import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.CustomerDTO;
+import com.amc.api.entities.Customer;
+import com.amc.api.entities.User;
+import com.amc.api.enums.UserRoleEnum;
+import com.amc.api.interfaces.CustomerBO;
+import com.amc.api.repositories.CustomerRepository;
+import com.amc.api.utils.Exceptions;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerControllerTest {

@@ -1,7 +1,7 @@
-package com.amc.api.Interfaces;
+package com.amc.api.interfaces;
 
-import com.amc.api.DTO.AddressDTO;
-import com.amc.api.Entities.Address;
+import com.amc.api.dto.AddressDTO;
+import com.amc.api.entities.Address;
 
 public interface AddressBO {
 

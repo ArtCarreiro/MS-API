@@ -1,7 +1,7 @@
-package com.amc.api.Interfaces;
+package com.amc.api.interfaces;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Entities.User;
+import com.amc.api.dto.UserDTO;
+import com.amc.api.entities.User;
 
 public interface UserBO {
     

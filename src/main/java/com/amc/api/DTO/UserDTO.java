@@ -1,6 +1,6 @@
-package com.amc.api.DTO;
+package com.amc.api.dto;
 
-import com.amc.api.Enums.UserRoleEnum;
+import com.amc.api.enums.UserRoleEnum;
 
 import lombok.Getter;
 import lombok.Setter;

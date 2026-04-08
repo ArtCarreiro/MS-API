@@ -1,16 +1,16 @@
-package com.amc.api.Services;
+package com.amc.api.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.DTO.UserDTO;
-import com.amc.api.Entities.User;
-import com.amc.api.Enums.UserRoleEnum;
-import com.amc.api.Interfaces.UserBO;
-import com.amc.api.Repositories.UserRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.UserDTO;
+import com.amc.api.entities.User;
+import com.amc.api.enums.UserRoleEnum;
+import com.amc.api.interfaces.UserBO;
+import com.amc.api.repositories.UserRepository;
+import com.amc.api.utils.Exceptions;
 
 import jakarta.transaction.Transactional;
 

@@ -1,4 +1,4 @@
-package com.amc.api.Enums;
+package com.amc.api.enums;
 
 public enum UserRoleEnum {
     ADMINISTRATOR,

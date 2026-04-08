@@ -1,4 +1,4 @@
-package com.amc.api.Controllers;
+package com.amc.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.DTO.AddressDTO;
-import com.amc.api.Entities.Address;
-import com.amc.api.Interfaces.AddressBO;
-import com.amc.api.Repositories.AddressRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.AddressDTO;
+import com.amc.api.entities.Address;
+import com.amc.api.interfaces.AddressBO;
+import com.amc.api.repositories.AddressRepository;
+import com.amc.api.utils.Exceptions;
 
 import jakarta.validation.Valid;
 

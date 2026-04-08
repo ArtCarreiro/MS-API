@@ -1,6 +1,6 @@
-package com.amc.api.Entities;
+package com.amc.api.entities;
 
-import com.amc.api.Enums.UserRoleEnum;
+import com.amc.api.enums.UserRoleEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package com.amc.api.Services;
+package com.amc.api.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,12 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.amc.api.DTO.AddressDTO;
-import com.amc.api.Entities.Address;
-import com.amc.api.Entities.Customer;
-import com.amc.api.Repositories.AddressRepository;
-import com.amc.api.Repositories.CustomerRepository;
-import com.amc.api.Utils.Exceptions;
+import com.amc.api.dto.AddressDTO;
+import com.amc.api.entities.Address;
+import com.amc.api.entities.Customer;
+import com.amc.api.repositories.AddressRepository;
+import com.amc.api.repositories.CustomerRepository;
+import com.amc.api.utils.Exceptions;
 
 @ExtendWith(MockitoExtension.class)
 class AddressServiceTest {

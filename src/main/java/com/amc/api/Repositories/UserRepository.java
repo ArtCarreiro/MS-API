@@ -1,6 +1,6 @@
-package com.amc.api.Repositories;
+package com.amc.api.repositories;
 
-import com.amc.api.Entities.User;
+import com.amc.api.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

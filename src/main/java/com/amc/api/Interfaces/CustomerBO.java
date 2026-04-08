@@ -1,7 +1,7 @@
-package com.amc.api.Interfaces;
+package com.amc.api.interfaces;
 
-import com.amc.api.DTO.CustomerDTO;
-import com.amc.api.Entities.Customer;
+import com.amc.api.dto.CustomerDTO;
+import com.amc.api.entities.Customer;
 
 public interface CustomerBO {
 
