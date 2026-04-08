@@ -40,7 +40,7 @@ public class UserService implements UserBO {
 
     @Override
     @Transactional
-    public User updateUser( String uuid, UserDTO data) {
+    public User updateUser(String uuid, UserDTO data) {
         try {
             User user = userRepository.findByUuid(uuid);
             if(user == null)
