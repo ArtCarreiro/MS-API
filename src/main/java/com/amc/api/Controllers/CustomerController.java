@@ -51,9 +51,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer data) {
-        Customer customer = null;
-        if (data != null)
-            customer = customerBO.createCustomer(data);
+        Customer customer = customerBO.createCustomer(data);
         return customer != null ? ResponseEntity.ok(customer) : ResponseEntity.badRequest().build();
     }
 

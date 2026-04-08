@@ -21,13 +21,14 @@ public class UserService implements UserBO {
     private UserRepository userRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ModelMapper mapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
     
     @Override
     public User createUser(User user) {
+        validateUser(user);
         try {
             String passwordEncoded = passwordEncoder.encode(user.getPassword());
             user.setPassword(passwordEncoded);
@@ -41,11 +42,10 @@ public class UserService implements UserBO {
     @Override
     @Transactional
     public User updateUser(String uuid, UserDTO data) {
+    User user = userRepository.findByUuid(uuid);
+    validateUser(user);
         try {
-            User user = userRepository.findByUuid(uuid);
-            if(user == null)
-                throw new RuntimeException("Usuário não encontrado");
-            modelMapper.map(data, user);
+            mapper.map(data, user);
             userRepository.save(user);
             return user;
         } catch (RuntimeException e) {
@@ -78,13 +78,10 @@ public class UserService implements UserBO {
     }
 
     @Override
-    public User validationUser (String uuid) {
-        User user = userRepository.findByUuid(uuid);
-        if (user == null) 
+    public void validateUser (User user) {
+        if (userRepository.findByUuid(user.getUuid()) == null) 
             throw new Exceptions.ResourceNotFoundException("Usuário não encontrado.");
-        if (user.getDeleted()) 
-            throw new Exceptions.DatabaseException("Usuário deletado.");
-        return user;
+        if (userRepository.findByEmail(user.getEmail()) != null) 
+            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail: " + user.getEmail() + ".");
     }
-
 }

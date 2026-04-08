@@ -42,7 +42,6 @@ public class AddressController {
 
     @PostMapping
     public ResponseEntity<Address> createAddress(@Valid @RequestBody Address data) {
-        addressBO.validation(data);
         Address address = addressBO.createAddress(data);
         return address != null ? ResponseEntity.ok(address) : ResponseEntity.badRequest().build();
     }

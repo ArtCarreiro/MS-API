@@ -1,10 +1,11 @@
 package com.amc.api.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,39 +40,59 @@ class AddressServiceTest {
     private AddressService addressService;
 
     @Test
-    void createAddressShouldSaveAddressAndRefreshCustomer() {
+    void createAddressShouldSaveAddressAndCustomer() {
         Address address = buildAddress();
         Customer customer = address.getCustomer();
+
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(address);
         when(addressRepository.save(address)).thenReturn(address);
-        when(customerRepository.findByUuid("customer-1")).thenReturn(customer);
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.save(customer)).thenReturn(customer);
 
         Address result = addressService.createAddress(address);
 
         assertSame(address, result);
         verify(addressRepository).save(address);
-        verify(customerRepository).findByUuid("customer-1");
         verify(customerRepository).save(customer);
     }
 
     @Test
-    void createAddressShouldWrapUnexpectedErrors() {
+    void createAddressShouldThrowWhenAddressIsNotFoundInValidation() {
         Address address = buildAddress();
-        when(addressRepository.save(address)).thenThrow(new IllegalStateException("falha ao salvar endereço"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> addressService.createAddress(address));
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(null);
 
-        assertTrue(exception.getCause() instanceof IllegalStateException);
+        Exceptions.ResourceNotFoundException exception = assertThrows(
+                Exceptions.ResourceNotFoundException.class,
+                () -> addressService.createAddress(address));
+
+        assertEquals("Endereço não encontrado", exception.getMessage());
     }
 
     @Test
-    void updateAddressShouldMapAndSaveWhenAddressExists() {
+    void createAddressShouldThrowWhenZipCodeIsInvalid() {
+        Address address = buildAddress();
+        address.setZipCode("1234567");
+
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(address);
+
+        Exceptions.InvalidRequestException exception = assertThrows(
+                Exceptions.InvalidRequestException.class,
+                () -> addressService.createAddress(address));
+
+        assertEquals("Requisição inválida: CEP não esta no formato correto.", exception.getMessage());
+    }
+
+    @Test
+    void updateAddressShouldMapAndSaveWhenValidationPasses() {
         Address address = buildAddress();
         AddressDTO dto = new AddressDTO();
         dto.setStreet("Rua Nova");
-        when(addressRepository.findByUuid("address-1")).thenReturn(address);
+
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(address);
         when(addressRepository.save(address)).thenReturn(address);
 
-        Address result = addressService.updateAddress(dto, "address-1");
+        Address result = addressService.updateAddress(dto, address.getUuid());
 
         assertSame(address, result);
         verify(mapper).map(dto, address.getClass());
@@ -79,63 +100,71 @@ class AddressServiceTest {
     }
 
     @Test
-    void updateAddressShouldWrapNotFoundError() {
-        when(addressRepository.findByUuid("missing")).thenReturn(null);
+    void updateAddressShouldWrapUnexpectedErrors() {
+        Address address = buildAddress();
+        AddressDTO dto = new AddressDTO();
+        RuntimeException failure = new RuntimeException("mapper-failed");
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> addressService.updateAddress(new AddressDTO(), "missing"));
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(address);
+        doThrow(failure).when(mapper).map(same(dto), eq(address.getClass()));
 
-        assertTrue(exception.getCause() instanceof RuntimeException);
-        assertEquals("Endereço não encontrado", exception.getCause().getMessage());
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> addressService.updateAddress(dto, address.getUuid()));
+
+        assertSame(failure, exception.getCause());
     }
 
     @Test
     void deleteAddressShouldReturnTrueWhenRepositoryDeletes() {
-        boolean deleted = addressService.deleteAddress("address-1");
+        boolean result = addressService.deleteAddress("address-uuid");
 
-        assertTrue(deleted);
-        verify(addressRepository).deleteAddressByUuid("address-1");
+        assertTrue(result);
+        verify(addressRepository).deleteAddressByUuid("address-uuid");
     }
 
     @Test
-    void deleteAddressShouldWrapUnexpectedErrors() {
-        doThrow(new IllegalStateException("falha ao deletar")).when(addressRepository).deleteAddressByUuid("address-1");
+    void deleteAddressShouldWrapRepositoryErrors() {
+        RuntimeException failure = new RuntimeException("delete-failed");
+        doThrow(failure).when(addressRepository).deleteAddressByUuid("address-uuid");
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> addressService.deleteAddress("address-1"));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> addressService.deleteAddress("address-uuid"));
 
-        assertTrue(exception.getCause() instanceof IllegalStateException);
+        assertSame(failure, exception.getCause());
     }
 
     @Test
-    void validationShouldThrowWhenZipCodeIsShorterThanExpected() {
-        Address address = buildAddress();
-        address.setZipCode("1234567");
-
-        Exceptions.InvalidRequestException exception = assertThrows(Exceptions.InvalidRequestException.class,
-                () -> addressService.validation(address));
-
-        assertEquals("Requisição inválida: CEP não esta no formato correto.", exception.getMessage());
-    }
-
-    @Test
-    void validationShouldDoNothingWhenZipCodeHasValidLength() {
+    void validateAddressShouldThrowWhenUuidIsNotFound() {
         Address address = buildAddress();
 
-        assertDoesNotThrow(() -> addressService.validation(address));
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(null);
+
+        assertThrows(Exceptions.ResourceNotFoundException.class, () -> addressService.validateAddress(address));
+    }
+
+    @Test
+    void validateAddressShouldThrowWhenZipCodeHasLessThanEightCharacters() {
+        Address address = buildAddress();
+        address.setZipCode("123");
+
+        when(addressRepository.findByUuid(address.getUuid())).thenReturn(address);
+
+        assertThrows(Exceptions.InvalidRequestException.class, () -> addressService.validateAddress(address));
     }
 
     private Address buildAddress() {
         Customer customer = new Customer();
-        customer.setUuid("customer-1");
+        customer.setUuid("customer-uuid");
 
         Address address = new Address();
-        address.setUuid("address-1");
+        address.setUuid("address-uuid");
         address.setStreet("Rua A");
         address.setNeighborhood("Centro");
         address.setCountry("Brasil");
         address.setZipCode("12345678");
-        address.setComplement("Apto 10");
+        address.setComplement("Casa");
         address.setCustomer(customer);
         return address;
     }

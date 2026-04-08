@@ -10,8 +10,9 @@ public interface UserBO {
     User updateUser( String uuid, UserDTO data);
 
     boolean deleteUser(String uuid);
+    
+    void validateUser (User user);
 
     boolean updateUserPassword(String uuid, String newPassword);
 
-    User validationUser (String uuid);
 }

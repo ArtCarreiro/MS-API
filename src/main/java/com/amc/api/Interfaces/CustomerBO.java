@@ -11,6 +11,6 @@ public interface CustomerBO {
 
     boolean deleteCustomer(String uuid);
 
-    void validationCustomer(String email);
+    void validateCustomer(Customer customer);
     
 }

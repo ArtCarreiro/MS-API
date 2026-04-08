@@ -30,6 +30,7 @@ public class AddressService implements AddressBO {
     @Override
     @Transactional
     public Address createAddress(Address data){
+        validateAddress(data);
         try {
             Address newAddress = addressRepository.save(data);
             Customer customer = customerRepository.findByUuid(data.getCustomer().getUuid());
@@ -43,10 +44,9 @@ public class AddressService implements AddressBO {
     @Override
     @Transactional
     public Address updateAddress(AddressDTO data, String uuid){
+        Address address = addressRepository.findByUuid(uuid);
+        validateAddress(address);
         try {
-            Address address = addressRepository.findByUuid(uuid);
-            if (address == null)
-                throw new RuntimeException("Endereço não encontrado");
             mapper.map(data, address.getClass());
             return addressRepository.save(address);
         } catch (RuntimeException e) {
@@ -66,7 +66,9 @@ public class AddressService implements AddressBO {
     }
 
     @Override
-    public void validation(Address address) {
+    public void validateAddress(Address address) {
+        if (addressRepository.findByUuid(address.getUuid()) == null) 
+             throw new Exceptions.ResourceNotFoundException("Endereço não encontrado");
         if (address.getZipCode().length() < 8 )
             throw new Exceptions.InvalidRequestException("CEP não esta no formato correto.");
     }

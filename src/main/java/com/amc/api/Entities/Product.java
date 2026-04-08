@@ -2,14 +2,13 @@ package com.amc.api.entities;
 
 import org.hibernate.annotations.SQLDelete;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "products")
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE uuid=?")
@@ -22,9 +21,10 @@ public class Product extends Base {
     private Double price;
 
     @NotNull
-    private Integer quantity;
+    private Integer estoque;
 
     @NotNull
+    @Column(updatable = false)
     private String skuCode;
 
     private String keywords;

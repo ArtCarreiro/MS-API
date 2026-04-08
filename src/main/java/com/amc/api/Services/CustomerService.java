@@ -30,7 +30,7 @@ public class CustomerService implements CustomerBO {
     @Override
     @Transient
     public Customer createCustomer(Customer data) {
-        validationCustomer(data.getUser().getEmail());
+        validateCustomer(data);
         try {
             userRepository.save(data.getUser());
             customerRepository.save(data);
@@ -43,10 +43,9 @@ public class CustomerService implements CustomerBO {
     @Override
     @Transactional
     public Customer updateCustomer(CustomerDTO data, String uuid){
+        Customer customer = customerRepository.findByUuid(uuid);
+        validateCustomer(customer);
         try {
-            Customer customer = customerRepository.findByUuid(uuid);
-            if (customer == null) 
-                throw new RuntimeException("Customer não encontrado");
             mapper.map(data, customer);
             customerRepository.save(customer);
             return customer;
@@ -67,8 +66,10 @@ public class CustomerService implements CustomerBO {
     }
 
     @Override
-    public void validationCustomer(String email) {
-        if (userRepository.findByEmail(email) != null)
-            throw new Exceptions.DatabaseException("E-mail: " + email + " já cadastrado.");
+    public void validateCustomer(Customer customer) {
+        if (customerRepository.findByUuid(customer.getUuid()) == null) 
+            throw new Exceptions.ResourceNotFoundException("Cliente não encontrado");
+        if (customerRepository.findByPhone(customer.getPhone()) != null)
+            throw new Exceptions.DatabaseException("Telefone: " + customer.getPhone() + " já cadastrado.");
     }
 }

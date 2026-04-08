@@ -6,21 +6,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.amc.api.entities.Customer;
+import com.amc.api.entities.Product;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, String> {
+public interface ProductRepository extends JpaRepository<Product, String> {
+    
+    Product findByName(String name);
 
-    Customer findByUuid(String uuid);
-
-    Customer findByPhone(String phone);
+    Product findByUuid(String uuid);
 
     @Modifying
     @Query(
         value = """
-            UPDATE customers 
+            UPDATE products 
             SET deleted = true, active = false
             WHERE uuid = :uuid
         """, nativeQuery = true)
-    void deleteCustomerByUuid(@Param("uuid") String uuid);
+    void deleteProductByUuid(@Param("uuid") String uuid);
+
 }

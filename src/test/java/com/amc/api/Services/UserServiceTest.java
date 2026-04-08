@@ -1,23 +1,14 @@
 package com.amc.api.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.amc.api.dto.UserDTO;
@@ -33,7 +24,7 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private ModelMapper modelMapper;
+    private ModelMapper mapper;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -42,146 +33,159 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    void createUserShouldEncodePasswordAndPersistUser() {
+    void createUserShouldEncodePasswordAndSave() {
         User user = buildUser();
-        when(passwordEncoder.encode("senha")).thenReturn("senha-criptografada");
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(null);
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encoded-password");
         when(userRepository.save(user)).thenReturn(user);
 
         User result = userService.createUser(user);
 
         assertSame(user, result);
-        assertEquals("senha-criptografada", user.getPassword());
+        assertEquals("encoded-password", user.getPassword());
         assertEquals(UserRoleEnum.ADMINISTRATOR, user.getRole());
         verify(userRepository).save(user);
     }
 
     @Test
-    void createUserShouldWrapUnexpectedErrors() {
+    void createUserShouldThrowWhenUserIsNotFoundInValidation() {
         User user = buildUser();
-        when(passwordEncoder.encode("senha")).thenReturn("senha-criptografada");
-        when(userRepository.save(user)).thenThrow(new IllegalStateException("falha ao salvar"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.createUser(user));
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(null);
 
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
-    }
-
-    @Test
-    void updateUserShouldMapAndSaveWhenUserExists() {
-        User user = buildUser();
-        UserDTO dto = new UserDTO();
-        dto.setEmail("novo@email.com");
-        when(userRepository.findByUuid("user-1")).thenReturn(user);
-
-        User result = userService.updateUser("user-1", dto);
-
-        assertSame(user, result);
-        verify(modelMapper).map(dto, user);
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    void updateUserShouldWrapNotFoundError() {
-        when(userRepository.findByUuid("missing")).thenReturn(null);
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> userService.updateUser("missing", new UserDTO()));
-
-        assertInstanceOf(RuntimeException.class, exception.getCause());
-        assertEquals("Usuário não encontrado", exception.getCause().getMessage());
-    }
-
-    @Test
-    void updateUserPasswordShouldEncodePasswordAndSaveUser() {
-        User user = buildUser();
-        when(userRepository.findByUuid("user-1")).thenReturn(user);
-        when(passwordEncoder.encode("nova")).thenReturn("nova-criptografada");
-
-        boolean updated = userService.updateUserPassword("user-1", "nova");
-
-        assertTrue(updated);
-        assertEquals("nova-criptografada", user.getPassword());
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    void updateUserPasswordShouldWrapUnexpectedErrors() {
-        when(userRepository.findByUuid("user-1")).thenReturn(null);
-        when(passwordEncoder.encode("nova")).thenReturn("nova-criptografada");
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> userService.updateUserPassword("user-1", "nova"));
-
-        assertInstanceOf(NullPointerException.class, exception.getCause());
-    }
-
-    @Test
-    void deleteUserShouldReturnTrueWhenRepositoryDeletes() {
-        boolean deleted = userService.deleteUser("user-1");
-
-        assertTrue(deleted);
-        verify(userRepository).deleteUserByUuid("user-1");
-    }
-
-    @Test
-    void deleteUserShouldWrapUnexpectedErrors() {
-        doThrow(new IllegalStateException("falha ao deletar")).when(userRepository).deleteUserByUuid("user-1");
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser("user-1"));
-
-        assertInstanceOf(IllegalStateException.class, exception.getCause());
-    }
-
-    @Test
-    void validationUserShouldReturnUserWhenItIsValid() {
-        User user = buildUser();
-        user.setDeleted(false);
-        when(userRepository.findByUuid("user-1")).thenReturn(user);
-
-        User result = userService.validationUser("user-1");
-
-        assertSame(user, result);
-    }
-
-    @Test
-    void validationUserShouldThrowWhenUserDoesNotExist() {
-        when(userRepository.findByUuid("missing")).thenReturn(null);
-
-        Exceptions.ResourceNotFoundException exception = assertThrows(Exceptions.ResourceNotFoundException.class,
-                () -> userService.validationUser("missing"));
+        Exceptions.ResourceNotFoundException exception = assertThrows(
+                Exceptions.ResourceNotFoundException.class,
+                () -> userService.createUser(user));
 
         assertEquals("Usuário não encontrado.", exception.getMessage());
     }
 
     @Test
-    void validationUserShouldThrowWhenUserIsDeleted() {
+    void createUserShouldThrowWhenEmailAlreadyExists() {
         User user = buildUser();
-        user.setDeleted(true);
-        when(userRepository.findByUuid("user-1")).thenReturn(user);
 
-        Exceptions.DatabaseException exception = assertThrows(Exceptions.DatabaseException.class,
-                () -> userService.validationUser("user-1"));
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(new User());
 
-        assertEquals("Erro no banco de dados: Usuário deletado.", exception.getMessage());
+        Exceptions.DatabaseException exception = assertThrows(
+                Exceptions.DatabaseException.class,
+                () -> userService.createUser(user));
+
+        assertEquals("Erro no banco de dados: Já existe um usuário com o e-mail: user@test.com.", exception.getMessage());
     }
 
     @Test
-    void validationUserShouldNotCallSaveDuringValidation() {
+    void updateUserShouldMapAndSaveWhenValidationPasses() {
         User user = buildUser();
-        when(userRepository.findByUuid("user-1")).thenReturn(user);
+        UserDTO dto = new UserDTO();
+        dto.setEmail("updated@test.com");
 
-        assertDoesNotThrow(() -> userService.validationUser("user-1"));
-        verify(userRepository, never()).save(any());
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(null);
+        when(userRepository.save(user)).thenReturn(user);
+
+        User result = userService.updateUser(user.getUuid(), dto);
+
+        assertSame(user, result);
+        verify(mapper).map(dto, user);
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void updateUserShouldWrapUnexpectedErrors() {
+        User user = buildUser();
+        UserDTO dto = new UserDTO();
+        RuntimeException failure = new RuntimeException("mapper-failed");
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(null);
+        doThrow(failure).when(mapper).map(dto, user);
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userService.updateUser(user.getUuid(), dto));
+
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
+    void updateUserPasswordShouldEncodeAndSaveNewPassword() {
+        User user = buildUser();
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(passwordEncoder.encode("nova-senha")).thenReturn("encoded-new-password");
+        when(userRepository.save(user)).thenReturn(user);
+
+        boolean result = userService.updateUserPassword(user.getUuid(), "nova-senha");
+
+        assertTrue(result);
+        assertEquals("encoded-new-password", user.getPassword());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void updateUserPasswordShouldWrapUnexpectedErrors() {
+        RuntimeException failure = new RuntimeException("save-failed");
+        User user = buildUser();
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(passwordEncoder.encode("nova-senha")).thenReturn("encoded-new-password");
+        doThrow(failure).when(userRepository).save(user);
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userService.updateUserPassword(user.getUuid(), "nova-senha"));
+
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
+    void deleteUserShouldReturnTrueWhenRepositoryDeletes() {
+        boolean result = userService.deleteUser("user-uuid");
+
+        assertTrue(result);
+        verify(userRepository).deleteUserByUuid("user-uuid");
+    }
+
+    @Test
+    void deleteUserShouldWrapRepositoryErrors() {
+        RuntimeException failure = new RuntimeException("delete-failed");
+        doThrow(failure).when(userRepository).deleteUserByUuid("user-uuid");
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userService.deleteUser("user-uuid"));
+
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
+    void validateUserShouldThrowWhenUuidIsNotFound() {
+        User user = buildUser();
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(null);
+
+        assertThrows(Exceptions.ResourceNotFoundException.class, () -> userService.validateUser(user));
+    }
+
+    @Test
+    void validateUserShouldThrowWhenEmailAlreadyExists() {
+        User user = buildUser();
+
+        when(userRepository.findByUuid(user.getUuid())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(new User());
+
+        assertThrows(Exceptions.DatabaseException.class, () -> userService.validateUser(user));
     }
 
     private User buildUser() {
         User user = new User();
-        user.setUuid("user-1");
-        user.setEmail("user@email.com");
-        user.setPassword("senha");
+        user.setUuid("user-uuid");
+        user.setEmail("user@test.com");
+        user.setPassword("123456");
         user.setRole(UserRoleEnum.ADMINISTRATOR);
-        user.setDeleted(false);
-        user.setActive(true);
         return user;
     }
 }

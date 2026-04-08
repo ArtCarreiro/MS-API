@@ -1,16 +1,12 @@
 package com.amc.api.services;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +39,13 @@ class CustomerServiceTest {
     private CustomerService customerService;
 
     @Test
-    void createCustomerShouldSaveUserAndCustomerWhenEmailIsAvailable() {
+    void createCustomerShouldPersistUserAndCustomer() {
         Customer customer = buildCustomer();
-        when(userRepository.findByEmail("customer@email.com")).thenReturn(null);
+
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.findByPhone(customer.getPhone())).thenReturn(null);
+        when(userRepository.save(customer.getUser())).thenReturn(customer.getUser());
+        when(customerRepository.save(customer)).thenReturn(customer);
 
         Customer result = customerService.createCustomer(customer);
 
@@ -55,37 +55,43 @@ class CustomerServiceTest {
     }
 
     @Test
-    void createCustomerShouldThrowWhenEmailAlreadyExists() {
+    void createCustomerShouldThrowWhenCustomerIsNotFoundInValidation() {
         Customer customer = buildCustomer();
-        when(userRepository.findByEmail("customer@email.com")).thenReturn(new User());
 
-        Exceptions.DatabaseException exception = assertThrows(Exceptions.DatabaseException.class,
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(null);
+
+        Exceptions.ResourceNotFoundException exception = assertThrows(
+                Exceptions.ResourceNotFoundException.class,
                 () -> customerService.createCustomer(customer));
 
-        assertEquals("Erro no banco de dados: E-mail: customer@email.com já cadastrado.", exception.getMessage());
-        verify(userRepository, never()).save(customer.getUser());
-        verify(customerRepository, never()).save(customer);
+        assertEquals("Cliente não encontrado", exception.getMessage());
     }
 
     @Test
-    void createCustomerShouldWrapRepositoryErrors() {
+    void createCustomerShouldThrowWhenPhoneAlreadyExists() {
         Customer customer = buildCustomer();
-        when(userRepository.findByEmail("customer@email.com")).thenReturn(null);
-        when(userRepository.save(customer.getUser())).thenThrow(new IllegalStateException("falha ao salvar usuário"));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> customerService.createCustomer(customer));
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.findByPhone(customer.getPhone())).thenReturn(new Customer());
 
-        assertTrue(exception.getCause() instanceof IllegalStateException);
+        Exceptions.DatabaseException exception = assertThrows(
+                Exceptions.DatabaseException.class,
+                () -> customerService.createCustomer(customer));
+
+        assertEquals("Erro no banco de dados: Telefone: 11999999999 já cadastrado.", exception.getMessage());
     }
 
     @Test
-    void updateCustomerShouldMapAndSaveWhenCustomerExists() {
+    void updateCustomerShouldMapAndSaveWhenValidationPasses() {
         Customer customer = buildCustomer();
         CustomerDTO dto = new CustomerDTO();
-        dto.setFirst_name("Novo");
-        when(customerRepository.findByUuid("customer-1")).thenReturn(customer);
+        dto.setPhone("11888888888");
 
-        Customer result = customerService.updateCustomer(dto, "customer-1");
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.findByPhone(customer.getPhone())).thenReturn(null);
+        when(customerRepository.save(customer)).thenReturn(customer);
+
+        Customer result = customerService.updateCustomer(dto, customer.getUuid());
 
         assertSame(customer, result);
         verify(mapper).map(dto, customer);
@@ -93,67 +99,74 @@ class CustomerServiceTest {
     }
 
     @Test
-    void updateCustomerShouldWrapNotFoundError() {
-        when(customerRepository.findByUuid("missing")).thenReturn(null);
+    void updateCustomerShouldWrapUnexpectedErrors() {
+        Customer customer = buildCustomer();
+        CustomerDTO dto = new CustomerDTO();
+        RuntimeException failure = new RuntimeException("mapper-failed");
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> customerService.updateCustomer(new CustomerDTO(), "missing"));
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.findByPhone(customer.getPhone())).thenReturn(null);
+        doThrow(failure).when(mapper).map(dto, customer);
 
-        assertTrue(exception.getCause() instanceof RuntimeException);
-        assertEquals("Customer não encontrado", exception.getCause().getMessage());
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> customerService.updateCustomer(dto, customer.getUuid()));
+
+        assertSame(failure, exception.getCause());
     }
 
     @Test
     void deleteCustomerShouldReturnTrueWhenRepositoryDeletes() {
-        boolean deleted = customerService.deleteCustomer("customer-1");
+        boolean result = customerService.deleteCustomer("customer-uuid");
 
-        assertTrue(deleted);
-        verify(customerRepository).deleteCustomerByUuid("customer-1");
+        assertTrue(result);
+        verify(customerRepository).deleteCustomerByUuid("customer-uuid");
     }
 
     @Test
-    void deleteCustomerShouldWrapUnexpectedErrors() {
-        doThrow(new IllegalStateException("falha ao deletar")).when(customerRepository).deleteCustomerByUuid("customer-1");
+    void deleteCustomerShouldWrapRepositoryErrors() {
+        RuntimeException failure = new RuntimeException("delete-failed");
+        doThrow(failure).when(customerRepository).deleteCustomerByUuid("customer-uuid");
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> customerService.deleteCustomer("customer-1"));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> customerService.deleteCustomer("customer-uuid"));
 
-        assertTrue(exception.getCause() instanceof IllegalStateException);
+        assertSame(failure, exception.getCause());
     }
 
     @Test
-    void validationCustomerShouldThrowWhenEmailAlreadyExists() {
-        when(userRepository.findByEmail("customer@email.com")).thenReturn(new User());
+    void validateCustomerShouldThrowWhenUuidIsNotFound() {
+        Customer customer = buildCustomer();
 
-        Exceptions.DatabaseException exception = assertThrows(Exceptions.DatabaseException.class,
-                () -> customerService.validationCustomer("customer@email.com"));
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(null);
 
-        assertEquals("Erro no banco de dados: E-mail: customer@email.com já cadastrado.", exception.getMessage());
+        assertThrows(Exceptions.ResourceNotFoundException.class, () -> customerService.validateCustomer(customer));
     }
 
     @Test
-    void validationCustomerShouldDoNothingWhenEmailIsAvailable() {
-        when(userRepository.findByEmail("customer@email.com")).thenReturn(null);
+    void validateCustomerShouldThrowWhenPhoneAlreadyExists() {
+        Customer customer = buildCustomer();
 
-        assertDoesNotThrow(() -> customerService.validationCustomer("customer@email.com"));
+        when(customerRepository.findByUuid(customer.getUuid())).thenReturn(customer);
+        when(customerRepository.findByPhone(customer.getPhone())).thenReturn(new Customer());
+
+        assertThrows(Exceptions.DatabaseException.class, () -> customerService.validateCustomer(customer));
     }
 
     private Customer buildCustomer() {
         User user = new User();
-        user.setUuid("user-1");
-        user.setEmail("customer@email.com");
-        user.setPassword("senha");
-        user.setRole(UserRoleEnum.CUSTOMER);
+        user.setUuid("user-uuid");
+        user.setEmail("customer@test.com");
+        user.setPassword("123456");
+        user.setRole(UserRoleEnum.ADMINISTRATOR);
 
         Customer customer = new Customer();
-        customer.setUuid("customer-1");
+        customer.setUuid("customer-uuid");
         customer.setFirst_name("Maria");
         customer.setLast_name("Silva");
-        customer.setBirthDate(new Date());
         customer.setPhone("11999999999");
-        customer.setNewsletter(true);
-        customer.setDocument("12345678901");
-        customer.setGender("F");
+        customer.setDocument("12345678900");
         customer.setUser(user);
         return customer;
     }

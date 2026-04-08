@@ -51,8 +51,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User data) {
-        if (userRepository.findByEmail(data.getEmail()) != null)
-            throw new Exceptions.DatabaseException("Já existe um usuário com o e-mail: " + data.getEmail() + ".");
         User user = userBO.createUser(data);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
