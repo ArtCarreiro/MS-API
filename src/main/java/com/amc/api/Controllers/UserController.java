@@ -1,6 +1,7 @@
 package com.amc.api.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,9 @@ public class UserController {
     public ResponseEntity<List<User>> getActiveUsers() {
         List<User> users = userRepository.findAll()
                 .stream()
-                .filter(User::getActive)
-                .toList();
-        return users.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(users);
+                .filter(user -> user.getActive() && !user.getDeleted())
+                .collect(Collectors.toList());
+        return users != null ? ResponseEntity.ok(users) : ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{uuid}")
