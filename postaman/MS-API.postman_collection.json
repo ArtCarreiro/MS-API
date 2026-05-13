@@ -1,0 +1,223 @@
+﻿{
+  "info": {
+    "_postman_id": "8a2830e6-6b71-4b34-9ea9-0b23b6aef8d1",
+    "name": "MS-API",
+    "description": "Collection pronta para testar os endpoints da MS-API localmente. Ajuste apenas as variaveis se sua API estiver em outra porta.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const stamp = Date.now();",
+          "pm.collectionVariables.set('timestamp', stamp);"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "timestamp", "value": "1700000000000" },
+    { "key": "userUuid", "value": "" },
+    { "key": "customerUuid", "value": "" },
+    { "key": "addressUuid", "value": "" },
+    { "key": "productUuid", "value": "" },
+    { "key": "fileUuid", "value": "" },
+    { "key": "uploadFilePath", "value": "C:\\temp\\produto.jpg" }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 2xx', function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) { const body = pm.response.json(); if (body.uuid) pm.collectionVariables.set('userUuid', body.uuid); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin.{{timestamp}}@example.com\",\n  \"password\": \"123456\",\n  \"role\": \"ADMINISTRATOR\"\n}" },
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
+            "description": "Cria um usuario. Role aceita: ADMINISTRATOR, SELLER ou CUSTOMER."
+          },
+          "response": []
+        },
+        {
+          "name": "List Users",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] } },
+          "response": []
+        },
+        {
+          "name": "Get User By UUID",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/users/{{userUuid}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userUuid}}"] } },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"seller.{{timestamp}}@example.com\",\n  \"role\": \"SELLER\"\n}" },
+            "url": { "raw": "{{baseUrl}}/users/{{userUuid}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userUuid}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Password",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "text/plain" }],
+            "body": { "mode": "raw", "raw": "novaSenha123" },
+            "url": { "raw": "{{baseUrl}}/users/{{userUuid}}/password", "host": ["{{baseUrl}}"], "path": ["users", "{{userUuid}}", "password"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/users/{{userUuid}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userUuid}}"] } },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Create Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 2xx', function () { pm.expect(pm.response.code).to.be.within(200, 299); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300) { const body = pm.response.json(); if (body.uuid) pm.collectionVariables.set('customerUuid', body.uuid); if (body.user && body.user.uuid) pm.collectionVariables.set('userUuid', body.user.uuid); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"Arthur\",\n  \"last_name\": \"Carreiro\",\n  \"birthDate\": \"1995-05-10T00:00:00.000+00:00\",\n  \"phone\": \"11999999999\",\n  \"newsletter\": true,\n  \"document\": \"12345678901\",\n  \"gender\": \"M\",\n  \"user\": {\n    \"email\": \"customer.{{timestamp}}@example.com\",\n    \"password\": \"123456\",\n    \"role\": \"CUSTOMER\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] }
+          },
+          "response": []
+        },
+        { "name": "List Customers", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] } }, "response": [] },
+        { "name": "Get Customer By UUID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/customers/{{customerUuid}}", "host": ["{{baseUrl}}"], "path": ["customers", "{{customerUuid}}"] } }, "response": [] },
+        {
+          "name": "Update Customer",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"Arthur\",\n  \"last_name\": \"Carreiro Atualizado\",\n  \"birthDate\": \"1995-05-10T00:00:00.000+00:00\",\n  \"phone\": \"11888888888\",\n  \"newsletter\": false,\n  \"document\": \"12345678901\",\n  \"gender\": \"M\"\n}" },
+            "url": { "raw": "{{baseUrl}}/customers/{{customerUuid}}", "host": ["{{baseUrl}}"], "path": ["customers", "{{customerUuid}}"] }
+          },
+          "response": []
+        },
+        { "name": "Delete Customer", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/customers/{{customerUuid}}", "host": ["{{baseUrl}}"], "path": ["customers", "{{customerUuid}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Create Address",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 2xx', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code >= 200 && pm.response.code < 300) { const body = pm.response.json(); if (body.uuid) pm.collectionVariables.set('addressUuid', body.uuid); }"] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"street\": \"Av. Paulista, 1000\",\n  \"neighborhood\": \"Bela Vista\",\n  \"country\": \"Brasil\",\n  \"zipCode\": \"01310100\",\n  \"complement\": \"Apto 101\",\n  \"customer\": {\n    \"uuid\": \"{{customerUuid}}\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/address", "host": ["{{baseUrl}}"], "path": ["address"] },
+            "description": "Execute Create Customer antes para preencher customerUuid."
+          },
+          "response": []
+        },
+        { "name": "Get Address By UUID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/address/{{addressUuid}}", "host": ["{{baseUrl}}"], "path": ["address", "{{addressUuid}}"] } }, "response": [] },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"street\": \"Rua Augusta, 500\",\n  \"neighborhood\": \"Consolacao\",\n  \"country\": \"Brasil\",\n  \"zipCode\": \"01305000\",\n  \"complement\": \"Casa 2\",\n  \"customer\": {\n    \"uuid\": \"{{customerUuid}}\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/address/{{addressUuid}}", "host": ["{{baseUrl}}"], "path": ["address", "{{addressUuid}}"] }
+          },
+          "response": []
+        },
+        { "name": "Delete Address", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/address/{{addressUuid}}", "host": ["{{baseUrl}}"], "path": ["address", "{{addressUuid}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 2xx', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code >= 200 && pm.response.code < 300) { const body = pm.response.json(); if (body.uuid) pm.collectionVariables.set('productUuid', body.uuid); }"] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produto {{timestamp}}\",\n  \"price\": 199.9,\n  \"estoque\": 20,\n  \"skuCode\": \"SKU-{{timestamp}}\",\n  \"keywords\": \"camiseta, algodao, basico\"\n}" },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          },
+          "response": []
+        },
+        { "name": "List Products", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] } }, "response": [] },
+        { "name": "Get Product By UUID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/products/{{productUuid}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productUuid}}"] } }, "response": [] },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produto Atualizado {{timestamp}}\",\n  \"price\": 249.9,\n  \"estoque\": 15,\n  \"keywords\": \"camiseta, premium\"\n}" },
+            "url": { "raw": "{{baseUrl}}/products/{{productUuid}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productUuid}}"] }
+          },
+          "response": []
+        },
+        { "name": "Delete Product", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/products/{{productUuid}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productUuid}}"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "Files",
+      "item": [
+        {
+          "name": "Upload Product File",
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Status 2xx', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code >= 200 && pm.response.code < 300) { const body = pm.response.json(); if (body.uuid) pm.collectionVariables.set('fileUuid', body.uuid); }"] } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "{{uploadFilePath}}" },
+                { "key": "name", "value": "produto-{{timestamp}}.jpg", "type": "text" },
+                { "key": "product.uuid", "value": "{{productUuid}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/files/{{productUuid}}", "host": ["{{baseUrl}}"], "path": ["files", "{{productUuid}}"] },
+            "description": "Ajuste uploadFilePath para um arquivo local existente. Se este endpoint retornar erro de binding, veja FileController: a rota usa /{uuid}, mas o parametro Java chama productUuid; tambem mistura MultipartFile com @RequestBody."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -34,3 +34,5 @@ build/
 
 ## Database files ###
 *.db
+
+*.properties

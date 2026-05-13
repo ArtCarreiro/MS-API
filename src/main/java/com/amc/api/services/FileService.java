@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.amc.api.dto.FileDTO;
 import com.amc.api.entities.File;
@@ -22,24 +23,23 @@ public class FileService implements FileBO {
     @Value("${aws.s3.bucket-name}")
     private String path;
 
+    @Autowired
+    private SupabaseStorageService supabaseService;
+
     @Override
-    public File save(FileDTO data) {
+    public File save(String productUuid, MultipartFile data, FileDTO file) {
         try {
-            File file = mapper.map(data, File.class);
-            validateFile(file);
-            file.setPath(path + "/" + file.getName());
-            return fileRepository.save(file);
+            File f = new File();
+            mapper.map(file, f);
+            String supabaseUrl = supabaseService.uploadProductImage(productUuid, data);
+            if (supabaseUrl != null) {
+                f.setPath(supabaseUrl);
+                return fileRepository.save(f);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void validateFile(File file) {
-        if (file == null)
-            throw new IllegalArgumentException("File data cannot be null");
-        if (fileRepository.findByUuid(file.getUuid()) == null) 
-             throw new RuntimeException("File not found");
+        return null;
     }
 
 }
