@@ -14,7 +14,9 @@ import com.amc.api.repositories.CustomerRepository;
 import com.amc.api.utils.Exceptions.ResourceNotFoundException;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class AddressService implements AddressBO {
     
@@ -29,8 +31,8 @@ public class AddressService implements AddressBO {
 
     @Override
     public AddressDTO getAddress(String customerUuid) {
-        Address address = addressRepository.findAddressByCustomerUuid(customerUuid)
-            .orElseThrow(() -> new ResourceNotFoundException("Customer not found with uuid: " + customerUuid));
+        Address address = addressRepository.findAddressByCustomerUuidAndActiveTrueAndDeletedFalse(customerUuid)
+            .orElseThrow(() -> new ResourceNotFoundException("Address not found with customer uuid: " + customerUuid));
         return mapper.map(address, AddressDTO.class);
     }
     
@@ -44,25 +46,26 @@ public class AddressService implements AddressBO {
         Address address = mapper.map(addressData, Address.class);
         address.setCustomer(customer);
         Address saved = addressRepository.save(address);
+        log.info("Address created for customer uuid: {}", customerUuid);
         return mapper.map(saved, AddressDTO.class);
     }
 
     @Override
     @Transactional
     public AddressDTO updateAddress(AddressRequestBodyDTO addressData, String customerUuid){
-        Address address = addressRepository.findAddressByCustomerUuid(customerUuid)
+        Address address = addressRepository.findAddressByCustomerUuidAndActiveTrueAndDeletedFalse(customerUuid)
             .orElseThrow(() -> new ResourceNotFoundException("Address not found with customer uuid: " + customerUuid));
         mapper.map(addressData, address);
+        log.info("Address updated for customer uuid: {}", customerUuid);
         return mapper.map(address, AddressDTO.class);
     }
 
     @Override
     @Transactional
     public void deleteAddress(String customerUuid){
-        try {
-            addressRepository.deleteAddressByCustomerUuid(customerUuid);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Address address = addressRepository.findAddressByCustomerUuidAndActiveTrueAndDeletedFalse(customerUuid)
+            .orElseThrow(() -> new ResourceNotFoundException("Address not found with customer uuid: " + customerUuid));
+        addressRepository.deleteByUuid(address.getUuid());
+        log.info("Address deleted for customer uuid: {}", customerUuid);
     }
 }

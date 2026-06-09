@@ -1,11 +1,9 @@
 package com.amc.api.entities;
 
-import org.hibernate.annotations.SQLDelete;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,7 +11,6 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "addresses")
-@SQLDelete(sql = "UPDATE addresses SET deleted = true WHERE uuid=?")
 public class Address extends Base {
     
     @NotNull
@@ -36,7 +33,8 @@ public class Address extends Base {
     @Column(length = 500, nullable = false)
     private String complement;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "customer_uuid")
     private Customer customer;
+    
 }
