@@ -1,5 +1,7 @@
 package com.amc.api.controllers;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,53 +13,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.dto.AddressDTO;
-import com.amc.api.entities.Address;
+import com.amc.api.dto.request.AddressRequestBodyDTO;
+import com.amc.api.dto.response.AddressDTO;
 import com.amc.api.interfaces.AddressBO;
-import com.amc.api.repositories.AddressRepository;
-import com.amc.api.utils.Exceptions;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/address")
 public class AddressController {
-    
-    @Autowired
-    private AddressBO addressBO;
 
     @Autowired
-    private AddressRepository addressRepository;
-
+    private final AddressBO addressBO;
     
-    @GetMapping("/{uuid}")
-    public ResponseEntity<Address> getAddressByUuid(@PathVariable String uuid) {
-        return addressRepository.findAll().stream()
-            .filter(address -> uuid.equals(address.getUuid()))
-            .findFirst()
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{customerUuid}")
+    public ResponseEntity<AddressDTO> getAddressByCustomerUuid(@PathVariable String customerUuid) {
+        AddressDTO address = addressBO.getAddress(customerUuid);
+        return ResponseEntity.ok(address);
     }
 
-    @PostMapping
-    public ResponseEntity<Address> createAddress(@Valid @RequestBody Address data) {
-        Address address = addressBO.createAddress(data);
-        return address != null ? ResponseEntity.ok(address) : ResponseEntity.badRequest().build();
+    @PostMapping("/{customerUuid}")
+    public ResponseEntity<AddressDTO> createAddress(@Valid @RequestBody AddressRequestBodyDTO addressData, @PathVariable String customerUuid) {
+        AddressDTO address = addressBO.createAddress(addressData, customerUuid);
+        return ResponseEntity.created(URI.create("/address/" + address.getUuid())).body(address);
     }
     
-    @PutMapping("/{uuid}")
-    public ResponseEntity<Address> updateAddress(@Valid @RequestBody AddressDTO data, @PathVariable String uuid) {
-        Address address = addressBO.updateAddress(data, uuid);
-        return address != null ? ResponseEntity.ok(address) : ResponseEntity.badRequest().build();
+    @PutMapping("/{customerUuid}")
+    public ResponseEntity<AddressDTO> updateAddress(@Valid @RequestBody AddressRequestBodyDTO addressData, @PathVariable String customerUuid) {
+        AddressDTO address = addressBO.updateAddress(addressData, customerUuid);
+        return ResponseEntity.ok(address);
     }
      
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<Boolean> deleteAddress(@PathVariable String uuid) {
-        Address address = addressRepository.findByUuid(uuid);
-        if (address == null) 
-            throw new Exceptions.ResourceNotFoundException("Endereço não encontrado.");
-        return addressBO.deleteAddress(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+    @DeleteMapping("/{customerUuid}")
+    public ResponseEntity<Void> deleteAddress(@PathVariable String customerUuid) {
+        addressBO.deleteAddress(customerUuid);
+        return ResponseEntity.noContent().build();
     }
-
 }
+    

@@ -1,5 +1,7 @@
 package com.amc.api.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +18,22 @@ public interface AddressRepository extends JpaRepository<Address, String> {
     @Modifying
     @Query(
         value = """
-            UPDATE customers 
-            SET deleted = true, active = false
-            WHERE uuid = :uuid
+            UPDATE addresses a
+            JOIN customers c ON a.customer_Uuid = c.uuid
+            SET a.active = false, a.deleted = true
+            WHERE c.uuid = :customerUuid
         """, nativeQuery = true)
-    void deleteAddressByUuid(@Param("uuid") String uuid);
+    void deleteAddressByCustomerUuid(@Param("customerUuid") String customerUuid);
+
+    boolean existsByCustomerUuidAndActiveTrueAndDeletedFalse(String customerUuid);
+
+    @Query(
+        value = """
+            SELECT a.* 
+            FROM addresses a
+            JOIN customers c ON a.customer_Uuid = c.uuid
+            WHERE c.uuid = :customerUuid AND a.active = true AND a.deleted = false
+        """, nativeQuery = true)
+    Optional<Address> findAddressByCustomerUuid(String customerUuid);
 
 }

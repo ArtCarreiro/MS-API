@@ -1,5 +1,7 @@
 package com.amc.api.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,7 @@ import com.amc.api.entities.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    Customer findByUuid(String uuid);
+    Optional<Customer> findByUuid(String uuid);
 
     Customer findByPhone(String phone);
 

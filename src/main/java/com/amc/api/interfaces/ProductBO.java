@@ -1,6 +1,6 @@
 package com.amc.api.interfaces;
 
-import com.amc.api.dto.ProductDTO;
+import com.amc.api.dto.response.ProductDTO;
 import com.amc.api.entities.Product;
 
 public interface ProductBO {

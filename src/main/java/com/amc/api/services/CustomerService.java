@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.dto.CustomerDTO;
+import com.amc.api.dto.response.CustomerDTO;
 import com.amc.api.entities.Customer;
 import com.amc.api.interfaces.CustomerBO;
 import com.amc.api.repositories.CustomerRepository;
@@ -43,7 +43,7 @@ public class CustomerService implements CustomerBO {
     @Override
     @Transactional
     public Customer updateCustomer(CustomerDTO data, String uuid){
-        Customer customer = customerRepository.findByUuid(uuid);
+        Customer customer = customerRepository.findByUuid(uuid).orElseThrow(() -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
         validateCustomer(customer);
         try {
             mapper.map(data, customer);

@@ -1,15 +1,15 @@
 package com.amc.api.interfaces;
 
-import com.amc.api.dto.AddressDTO;
-import com.amc.api.entities.Address;
+import com.amc.api.dto.request.AddressRequestBodyDTO;
+import com.amc.api.dto.response.AddressDTO;
 
 public interface AddressBO {
+
+    AddressDTO getAddress(String customerUuid);
     
-    Address createAddress(Address data);
+    AddressDTO createAddress(AddressRequestBodyDTO addressData, String customerUuid);
 
-    Address updateAddress(AddressDTO data, String uuid);
+    AddressDTO updateAddress(AddressRequestBodyDTO addressData, String customerUuid);
 
-    boolean deleteAddress(String uuid);
-
-    void validateAddress(Address data);
+    void deleteAddress(String customerUuid);
 }

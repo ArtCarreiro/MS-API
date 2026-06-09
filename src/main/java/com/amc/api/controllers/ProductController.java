@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.dto.ProductDTO;
+import com.amc.api.dto.response.ProductDTO;
 import com.amc.api.entities.Product;
 import com.amc.api.interfaces.ProductBO;
 import com.amc.api.repositories.ProductRepository;
@@ -63,9 +63,11 @@ public class ProductController {
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String uuid) {
-        if (productRepository.findByUuid(uuid) != null)
-            throw new Exceptions.ResourceNotFoundException("Produto não encontrado.");
-        return productBO.deleteProduct(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+        Product product = productRepository.findAll().stream()
+                .filter(p -> p.getUuid().equals(uuid) && p.getActive() && !p.getDeleted())
+                .findFirst()
+                .orElseThrow(() -> new Exceptions.ResourceNotFoundException("Produto", uuid));
+        return productBO.deleteProduct(product.getUuid()) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
     }
     
 }

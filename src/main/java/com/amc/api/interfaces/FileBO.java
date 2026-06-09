@@ -2,7 +2,7 @@ package com.amc.api.interfaces;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amc.api.dto.FileDTO;
+import com.amc.api.dto.response.FileDTO;
 import com.amc.api.entities.File;
 
 public interface FileBO {

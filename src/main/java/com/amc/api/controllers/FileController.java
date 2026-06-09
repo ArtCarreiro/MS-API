@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amc.api.dto.FileDTO;
+import com.amc.api.dto.response.FileDTO;
 import com.amc.api.entities.File;
 import com.amc.api.interfaces.FileBO;
 

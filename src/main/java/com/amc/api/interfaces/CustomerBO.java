@@ -1,6 +1,6 @@
 package com.amc.api.interfaces;
 
-import com.amc.api.dto.CustomerDTO;
+import com.amc.api.dto.response.CustomerDTO;
 import com.amc.api.entities.Customer;
 
 public interface CustomerBO {

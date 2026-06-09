@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.dto.UserDTO;
+import com.amc.api.dto.response.UserDTO;
 import com.amc.api.entities.User;
 import com.amc.api.interfaces.UserBO;
 import com.amc.api.repositories.UserRepository;

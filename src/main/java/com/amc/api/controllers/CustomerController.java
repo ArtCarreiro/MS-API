@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amc.api.dto.CustomerDTO;
+import com.amc.api.dto.response.CustomerDTO;
 import com.amc.api.entities.Customer;
 import com.amc.api.interfaces.CustomerBO;
 import com.amc.api.repositories.CustomerRepository;
@@ -64,7 +64,7 @@ public class CustomerController {
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Boolean> deleteCustomer(@PathVariable String uuid) {
-        Customer customer = customerRepository.findByUuid(uuid);
+        Customer customer = customerRepository.findByUuid(uuid).orElseThrow(() -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
         if (customer == null)
             throw new Exceptions.ResourceNotFoundException("Cliente não encontrado.");
         return customerBO.deleteCustomer(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();

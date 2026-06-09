@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.dto.UserDTO;
+import com.amc.api.dto.response.UserDTO;
 import com.amc.api.entities.User;
 import com.amc.api.enums.UserRoleEnum;
 import com.amc.api.interfaces.UserBO;

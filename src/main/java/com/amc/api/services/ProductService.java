@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.amc.api.dto.ProductDTO;
+import com.amc.api.dto.response.ProductDTO;
 import com.amc.api.entities.Product;
 import com.amc.api.interfaces.ProductBO;
 import com.amc.api.repositories.ProductRepository;

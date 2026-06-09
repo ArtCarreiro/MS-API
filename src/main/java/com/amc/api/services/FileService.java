@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amc.api.dto.FileDTO;
+import com.amc.api.dto.response.FileDTO;
 import com.amc.api.entities.File;
 import com.amc.api.interfaces.FileBO;
 import com.amc.api.repositories.FileRepository; 
