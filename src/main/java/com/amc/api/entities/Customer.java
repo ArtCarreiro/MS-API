@@ -1,20 +1,16 @@
 package com.amc.api.entities;
 
-import java.util.Date;
-import java.util.List;
-
+import java.time.LocalDate;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,31 +25,42 @@ import lombok.Setter;
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE uuid=?")
 public class Customer extends Base {
 
-    @NotNull
+    @Column(name = "first_name", nullable = false)
     private String first_name;
 
-    @NotNull
+    @Column(name = "last_name", nullable = false)
     private String last_name;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date birthDate;
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
 
-    @NotNull
-    @Column(length = 12)
+    @Column(name = "phone", length = 12, nullable = false)
     private String phone;
 
-    private Boolean newsletter;
+    @Column(name = "newsletter")
+    private Boolean newsletter = false;
 
-    @NotNull
+    @Column(name = "document", nullable = false)
     private String document;
 
-    private String gender;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @OneToOne
-    private User user;
-
+    @Column(name = "password", nullable = false)
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addresses;
+    private String password;
 
+
+    @AssertTrue(message = "É necessário ser maior de idade")
+    public boolean isOfLegalAge() {
+    return birthDate != null &&
+           birthDate.plusYears(18).isBefore(LocalDate.now());
+    }
+
+    public String encryptPassword(String password) {
+        PasswordEncoder passwordEncoder = null;
+        return passwordEncoder.encode(password);
+    }
+    
 }

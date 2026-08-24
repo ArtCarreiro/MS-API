@@ -11,6 +11,4 @@ public interface ProductBO {
 
     boolean deleteProduct(String uuid);
 
-    void validateProduct(Product product);
-
 }

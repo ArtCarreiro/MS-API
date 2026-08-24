@@ -14,5 +14,5 @@ public class CustomerDTO {
     private String phone;
     private Boolean newsletter;
     private String document;
-    private String gender; 
+    private String email;
 }

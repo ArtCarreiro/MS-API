@@ -7,7 +7,6 @@ WORKDIR /app
 RUN mvn clean install
 
 
-
 FROM amazoncorretto:21
 
 COPY --from=build /app/target/*.jar /app/app.jar

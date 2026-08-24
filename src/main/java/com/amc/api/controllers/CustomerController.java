@@ -1,12 +1,8 @@
 package com.amc.api.controllers;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +19,7 @@ import com.amc.api.utils.Exceptions;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/customer")
 public class CustomerController {
 
     @Autowired
@@ -32,42 +28,33 @@ public class CustomerController {
     @Autowired
     private CustomerBO customerBO;
 
-    @GetMapping
-    public ResponseEntity<List<Customer>> getActiveCustomers() {
-        List<Customer> customers = customerRepository.findAll()
-                .stream()
-                .filter(customer -> customer.getActive() && !customer.getDeleted())
-                .collect(Collectors.toList());
-        return customers != null ? ResponseEntity.ok(customers) : ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{uuid}")
-    public ResponseEntity<Customer> getCustomerByUuid(@PathVariable String uuid) {
-        return customerRepository.findAll().stream()
-                .filter(customer -> uuid.equals(customer.getUuid()))
-                .findFirst()
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer data) {
-        Customer customer = customerBO.createCustomer(data);
+    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customerData) {
+        Customer customer = customerBO.createCustomer(customerData);
         return customer != null ? ResponseEntity.ok(customer) : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody CustomerDTO data, @PathVariable String uuid) {
-        Customer customer = customerBO.updateCustomer(data, uuid);
-        return customer != null ? ResponseEntity.ok(customer) : ResponseEntity.badRequest().build();
+    public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody CustomerDTO newCustomerData, @PathVariable String customerUuid) {
+        Customer customer = customerRepository.findByUuid(customerUuid).orElseThrow(() 
+            -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
+        return customer != null ? ResponseEntity.ok(customerBO.updateCustomer(newCustomerData, customer)) : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<Boolean> deleteCustomer(@PathVariable String uuid) {
-        Customer customer = customerRepository.findByUuid(uuid).orElseThrow(() -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
-        if (customer == null)
-            throw new Exceptions.ResourceNotFoundException("Cliente não encontrado.");
-        return customerBO.deleteCustomer(uuid) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+    public ResponseEntity<Void> deleteCustomer(@PathVariable String uuid) {
+        Customer customer = customerRepository.findByUuid(uuid).orElseThrow(() 
+            -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
+        customerBO.deleteCustomer(customer.getUuid());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{uuid}/updatePassword")
+    public ResponseEntity<Void> updateCustomerPassword(@PathVariable String uuid, @RequestBody String newPassword) {
+        Customer customer = customerRepository.findByUuid(uuid).orElseThrow(() 
+            -> new Exceptions.ResourceNotFoundException("Cliente não encontrado"));
+        customerBO.updateCustomerPassword(customer, newPassword);
+        return ResponseEntity.ok().build();
     }
 
 }

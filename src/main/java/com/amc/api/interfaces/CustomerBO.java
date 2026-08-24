@@ -5,12 +5,11 @@ import com.amc.api.entities.Customer;
 
 public interface CustomerBO {
 
-    Customer createCustomer(Customer data);
+    Customer createCustomer(Customer customerData);
 
-    Customer updateCustomer(CustomerDTO data, String uuid);
+    Customer updateCustomer(CustomerDTO newCustomerData, Customer oldCustomerData);
 
-    boolean deleteCustomer(String uuid);
+    void deleteCustomer(String customerUuid);
 
-    void validateCustomer(Customer customer);
-    
+    void updateCustomerPassword(Customer customer, String newPassword);
 }
