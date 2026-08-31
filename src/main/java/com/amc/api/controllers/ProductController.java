@@ -1,7 +1,6 @@
 package com.amc.api.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,40 +33,32 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productRepository.findAll().stream()
-                                .filter(product -> product.getActive() && !product.getDeleted())
-                                .collect(Collectors.toList());
-        return products != null ? ResponseEntity.ok(products) : ResponseEntity.noContent().build();
+        return ResponseEntity.ok(productBO.getAllProducts());
     }
 
     @GetMapping("/{uuid}")
     public ResponseEntity<Product> getProductByUuid(@PathVariable String uuid) {
-        return productRepository.findAll().stream()
-                .filter(product -> product.getUuid().equals(uuid))
-                .findFirst()
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());      
+        return ResponseEntity.ok(productBO.getProductByUuid(uuid));
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product data) {
-        Product product = productBO.createProduct(data);
-        return product != null ? ResponseEntity.ok(product) : ResponseEntity.badRequest().build();
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product newProductData) {
+        return ResponseEntity.ok(productBO.createProduct(newProductData));
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String uuid, @Valid @RequestBody ProductDTO data) {
-        Product product =  productBO.updateProduct(data, uuid);
-        return product != null ? ResponseEntity.ok(product) : ResponseEntity.badRequest().build(); 
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable String productUuid, @Valid @RequestBody ProductDTO newProductData) {
+        Product product = productRepository.findAll().stream()
+                .filter(p -> p.getUuid().equals(productUuid) && p.getActive() && !p.getDeleted())
+                .findFirst()
+                .orElseThrow(() -> new Exceptions.ResourceNotFoundException("Produto", productUuid));
+        return ResponseEntity.ok(productBO.updateProduct(newProductData, product)); 
     }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String uuid) {
-        Product product = productRepository.findAll().stream()
-                .filter(p -> p.getUuid().equals(uuid) && p.getActive() && !p.getDeleted())
-                .findFirst()
-                .orElseThrow(() -> new Exceptions.ResourceNotFoundException("Produto", uuid));
-        return productBO.deleteProduct(product.getUuid()) == true ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+        productBO.deleteProduct(uuid);
+        return ResponseEntity.noContent().build();
     }
     
 }

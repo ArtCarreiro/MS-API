@@ -1,14 +1,20 @@
 package com.amc.api.interfaces;
 
+import java.util.List;
+
 import com.amc.api.dto.response.ProductDTO;
 import com.amc.api.entities.Product;
 
 public interface ProductBO {
+
+    Product getProductByUuid(String productUuid);
+
+    List<Product> getAllProducts();
     
-    Product createProduct(Product data);
+    Product createProduct(Product newProductData);
 
-    Product updateProduct(ProductDTO data, String uuid);
+    ProductDTO updateProduct(ProductDTO newProductData, Product product);
 
-    boolean deleteProduct(String uuid);
+    void deleteProduct(String productUuid);
 
 }
